@@ -19,7 +19,8 @@ int main()
 
     // ----- setup ---- //
     // testing shaders
-    Sora::load_shader_from_file("assets/shaders/default.glsl");
+    Sora::Shader shader = Sora::load_shader_from_file("assets/shaders/default.glsl");
+    shader.create();
 
     // ---- end setup --- //
 
@@ -33,6 +34,9 @@ int main()
         // update call
 
         // render call
+        shader.bind();
+
+        shader.unbind();
 
         // update window
         window.update();

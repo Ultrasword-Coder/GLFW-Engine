@@ -12,18 +12,21 @@ namespace Sora
     class Shader
     {
     private:
+        const char *filepath;
         std::string vert_shader, frag_shader;
         uint program;
 
     public:
-        Shader(const char *, const char *);
+        Shader(const char *);
         ~Shader();
 
+        void set_shader_code(std::string, std::string);
+        void create();
         void clean();
         void bind();
         void unbind();
 
-        void compile_shader(uint, const char *);
+        uint compile_shader(uint, const char *);
 
         // uniform setters
         void uploadBool(const char *, bool) const;

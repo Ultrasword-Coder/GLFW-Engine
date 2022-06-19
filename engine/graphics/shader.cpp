@@ -7,18 +7,58 @@
 #include <cassert>
 #include <string.h>
 #include <fstream>
+#include <sstream>
 
 #include "../utils.hpp"
 #include "shader.hpp"
 
-Sora::Shader::Shader(const char *vert, const char *frag)
+Sora::Shader::Shader(const char *file)
 {
     // parse shader strings
+    this->filepath = file;
 }
 
 Sora::Shader::~Shader()
 {
     this->clean();
+}
+
+void Sora::Shader::set_shader_code(std::string vert_code, std::string frag_code)
+{
+    this->vert_shader = vert_code;
+    this->frag_shader = frag_code;
+}
+
+void Sora::Shader::create()
+{
+    uint vs, fs;
+    vs = compile_shader(GL_VERTEX_SHADER, vert_shader.c_str());
+    fs = compile_shader(GL_FRAGMENT_SHADER, frag_shader.c_str());
+
+    program = glCreateProgram();
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    glLinkProgram(program);
+    glValidateProgram(program);
+
+    int success;
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        int length;
+        glGetShaderiv(program, GL_INFO_LOG_LENGTH, &length);
+        char *message = (char *)alloca(length * sizeof(char));
+        glGetShaderInfoLog(program, length, &length, message);
+
+        // output error
+        std::cout << "[ValidateShaderProgram][shader.cpp] Failed to validate Shader program!\nShaderSource: :" << filepath << std::endl;
+        assert(!"[ValidateShaderProgram][shader.cpp] Failed to validate shader program!");
+    }
+    // free memory
+    glDeleteShader(vs);
+    glDeleteShader(fs);
 }
 
 void Sora::Shader::clean()
@@ -36,7 +76,7 @@ void Sora::Shader::unbind()
     glUseProgram(0);
 }
 
-void Sora::Shader::compile_shader(uint type, const char *shader)
+uint Sora::Shader::compile_shader(uint type, const char *shader)
 {
     uint id = glCreateShader(type);
     glShaderSource(id, 1, &shader, nullptr);
@@ -57,6 +97,7 @@ void Sora::Shader::compile_shader(uint type, const char *shader)
                   << message << std::endl;
         assert(!"[SHADER-COMPILE][shader.cpp] Failed to compile shader!");
     }
+    return id;
 }
 
 // uniform setters
@@ -75,11 +116,13 @@ void Sora::Shader::uploadFloat(const char *name, float value) const
     glUniform1f(glGetUniformLocation(this->program, name), value);
 }
 
+// load shader from file
+
 Sora::Shader Sora::load_shader_from_file(const char *filepath)
 {
     SoraIO::File file(filepath);
     // parse file
-    std::string fragment, vertex;
+    std::stringstream vertex, fragment;
 
     int section = -1;
     while (file.has_next_line())
@@ -96,23 +139,24 @@ Sora::Shader Sora::load_shader_from_file(const char *filepath)
         {
             if (section == 0)
             {
-                vertex.append(file.next_line() + '\n');
+                vertex << file.next_line() << '\n';
             }
             else if (section == 1)
             {
-                fragment.append(file.next_line() + '\n');
+                fragment << file.next_line() << '\n';
             }
+            // std::cout << "Section: " << section << "\t|Line Size: " << file.next_line().size() << "\t|Line: `" << file.next_line() << "`" << std::endl;
         }
-        std::cout << "Section: " << section << "\t|Line Size: " << file.next_line().size() << "\t|Line: " << file.next_line() << std::endl;
     }
     file.clean();
 
     // finished reading
-    std::cout << "VertexCode:\n"
-              << vertex << "\nFragmentCode:\n"
-              << fragment << std::endl;
+    // std::cout << "VertexCode:\n"
+    //           << vertex.str() << "\nFragmentCode:\n"
+    //           << fragment.str() << std::endl;
 
-    Sora::Shader result(vertex.c_str(), fragment.c_str());
+    Sora::Shader result(filepath);
+    result.set_shader_code(vertex.str(), fragment.str());
 
     return result;
 }

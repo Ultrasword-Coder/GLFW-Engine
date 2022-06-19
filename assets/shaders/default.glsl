@@ -4,7 +4,7 @@ layout(location=0) in vec3 vPos;
 
 out vec3 fPos;
 
-int main(){
+void main(){
     gl_Position = vec4(vPos, 0.0);
     fPos = vPos;
 }
@@ -13,6 +13,6 @@ int main(){
 #version 330 core
 in vec3 fPos;
 
-int main(){
+void main(){
     gl_FragColor = vec4(fPos, 1.0);
 }
