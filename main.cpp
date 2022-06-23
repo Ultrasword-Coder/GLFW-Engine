@@ -8,6 +8,8 @@
 
 #include "engine/graphics/shader.cpp"
 
+#include "engine/mesh/buffer_object.cpp"
+
 typedef unsigned int uint;
 
 int main()
@@ -40,10 +42,11 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    unsigned int buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    Sora::BufferObject<float> vert(28, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+    vert.create();
+    vert.bind();
+    vert.set_data(vertices, 28);
+    vert.upload_data();
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void *)0);
@@ -56,16 +59,18 @@ int main()
         0, 1, 2,
         2, 3, 0};
 
-    unsigned int ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    Sora::BufferObject<uint> index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    index.create();
+    index.bind();
+    index.set_data(indices, 6);
+    index.upload_data();
 
     // std::cout << vao << " " << vbo << " " << ibo << std::endl;
 
     glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    vert.unbind();
+    index.unbind();
+
     // ---- end setup --- //
 
     // game loop
@@ -90,8 +95,8 @@ int main()
     }
 
     glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &buffer);
-    glDeleteBuffers(1, &ibo);
+    vert.clean();
+    index.clean();
     shader.unbind();
     shader.clean();
 

@@ -1,0 +1,3 @@
+/*
+    Structure meant to keep track of uniform variables and their locations in shaders
+*/
