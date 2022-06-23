@@ -15,6 +15,12 @@ static void glCheckError()
     }
 }
 
+static void glErrorCallback(int error, const char *description)
+{
+    std::cout << "ERROR: " << error << "| " << description << std::endl;
+}
+
+// -- class ---
 SoraIO::File::File(const char *path) : path(path)
 {
     // get file size

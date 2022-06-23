@@ -72,5 +72,6 @@ void Sora::Window::set_focus()
 
 void Sora::Window::window_size_callback(GLFWwindow *window, int width, int height)
 {
+    // std::cout << "window resized to\tw:" << width << "|h: " << height << std::endl;
     glViewport(0, 0, width, height);
 }
