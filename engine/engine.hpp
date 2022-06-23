@@ -5,6 +5,8 @@
 #include <iostream>
 #include <cassert>
 
+#include "window.cpp"
+
 namespace Sora
 {
 
@@ -54,6 +56,9 @@ namespace Sora
         */
         if (glewInit() != GLEW_OK)
         {
+            // end window instance
+            if (Sora::w_instance->window)
+                Sora::w_instance->clean();
             std::cout << "[GLEWINIT][engine.hpp] Failed to initialize `GLEW`" << std::endl;
             assert(!"[GLEWINIT][engine.hpp] GLEW Failed to initialize!");
         }
@@ -61,5 +66,7 @@ namespace Sora
 
     void clean_engine(int verbose)
     {
+        std::cout << "[GLFWTERMINATE][engine.hpp] Terminating GLFW!" << std::endl;
+        glfwTerminate();
     }
 }

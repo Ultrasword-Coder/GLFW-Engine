@@ -10,6 +10,8 @@
 static void glClearError();
 static void glCheckError();
 
+static void glErrorCallback(int, const char *);
+
 namespace SoraIO
 {
     /*
