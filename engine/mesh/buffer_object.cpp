@@ -1,3 +1,4 @@
+#pragma once
 #include "buffer_object.hpp"
 
 template <typename Data>

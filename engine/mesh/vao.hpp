@@ -1,3 +1,4 @@
+#pragma once
 #include <GL/glew.h>
 
 #include <vector>
@@ -8,19 +9,23 @@
 namespace Sora
 {
 
-    class VBO
+    class VAO
     {
     private:
         std::vector<Sora::Attribute> attribs;
+        uint id;
 
     public:
-        VBO();
-        ~VBO();
+        VAO();
+        ~VAO();
 
         void create();
+        void clean();
         void add_attribute(Sora::Attribute attrib);
         void enable_attribs();
         void disable_attribs();
+        void bind();
+        void unbind();
     };
 
 }

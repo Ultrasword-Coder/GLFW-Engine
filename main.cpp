@@ -9,6 +9,7 @@
 #include "engine/graphics/shader.cpp"
 
 #include "engine/mesh/buffer_object.cpp"
+#include "engine/mesh/vao.cpp"
 
 typedef unsigned int uint;
 
@@ -38,9 +39,13 @@ int main()
         0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
         -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
 
-    unsigned int vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    Sora::VAO m_vao;
+    m_vao.create();
+    m_vao.bind();
+
+    // unsigned int vao;
+    // glGenVertexArrays(1, &vao);
+    // glBindVertexArray(vao);
 
     Sora::BufferObject<float> vert(28, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
     vert.create();
@@ -48,11 +53,10 @@ int main()
     vert.set_data(vertices, 28);
     vert.upload_data();
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void *)0);
+    m_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7));
+    m_vao.add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7));
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void *)0);
+    m_vao.enable_attribs();
 
     // index stuff
     unsigned int indices[] = {
@@ -66,8 +70,8 @@ int main()
     index.upload_data();
 
     // std::cout << vao << " " << vbo << " " << ibo << std::endl;
-
-    glBindVertexArray(0);
+    m_vao.disable_attribs();
+    m_vao.unbind();
     vert.unbind();
     index.unbind();
 
@@ -84,7 +88,8 @@ int main()
 
         // render call
         shader.bind();
-        glBindVertexArray(vao);
+        m_vao.bind();
+        m_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
         shader.unbind();
 
@@ -94,7 +99,7 @@ int main()
         window.update();
     }
 
-    glDeleteVertexArrays(1, &vao);
+    m_vao.clean();
     vert.clean();
     index.clean();
     shader.unbind();
