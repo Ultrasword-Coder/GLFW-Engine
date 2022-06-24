@@ -101,19 +101,44 @@ uint Sora::Shader::compile_shader(uint type, const char *shader)
 }
 
 // uniform setters
+int Sora::Shader::uniform_location(const char *name) const
+{
+    glUseProgram(this->program);
+    return glGetUniformLocation(this->program, name);
+}
+
 void Sora::Shader::uploadBool(const char *name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(this->program, name), (int)value);
+    glUniform1i(this->uniform_location(name), (int)value);
 }
 
 void Sora::Shader::uploadInt(const char *name, int value) const
 {
-    glUniform1i(glGetUniformLocation(this->program, name), value);
+    glUniform1i(this->uniform_location(name), value);
 }
 
 void Sora::Shader::uploadFloat(const char *name, float value) const
 {
-    glUniform1f(glGetUniformLocation(this->program, name), value);
+    glUniform1f(this->uniform_location(name), value);
+}
+
+template <typename T>
+void Sora::Shader::uploadValue(int pos, T value) const
+{
+    switch (typeid(value))
+    {
+    case typeid(float):
+        glUniform1f(pos, value);
+        break;
+    case typeid(int):
+        glUniform1i(pos, value);
+        break;
+    case typeid(uint):
+        glUniform1i(pos, value);
+        break;
+    default:
+        break;
+    }
 }
 
 // load shader from file

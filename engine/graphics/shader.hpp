@@ -29,13 +29,16 @@ namespace Sora
         uint compile_shader(uint, const char *);
 
         // uniform setters
+        int uniform_location(const char *) const;
         void uploadBool(const char *, bool) const;
         void uploadInt(const char *, int) const;
         void uploadFloat(const char *, float) const;
 
         // implement matrix uploading and others
 
-        // ---- static methods --- //
+        // upload given position
+        template <typename T>
+        void uploadValue(int pos, T value) const;
     };
 
     static Sora::Shader load_shader_from_file(const char *filepath);

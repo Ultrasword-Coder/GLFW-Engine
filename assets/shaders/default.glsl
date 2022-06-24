@@ -3,6 +3,8 @@
 layout(location=0) in vec3 vPos;
 layout(location=1) in vec4 vCol;
 
+uniform float utime;
+
 out vec4 fCol;
 
 void main(){
@@ -14,6 +16,8 @@ void main(){
 #version 330 core
 in vec4 fCol;
 
+uniform float utime;
+
 void main(){
-    gl_FragColor = fCol;
+    gl_FragColor = vec4(fCol.xy, abs(sin(utime)), fCol.w);
 }

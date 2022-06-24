@@ -17,7 +17,7 @@ void Sora::Attribute::disable_attrib()
 
 void Sora::Attribute::establish_attrib()
 {
-    std::cout << pointer << " " << size << " " << type << " " << normalized << " " << vertex_size_bytes << std::endl;
+    // std::cout << pointer << " " << size << " " << type << " " << normalized << " " << vertex_size_bytes << std::endl;
     this->enable_attrib();
     glVertexAttribPointer(this->pointer, this->size, this->type, this->normalized, this->vertex_size_bytes, (void *)0);
 }

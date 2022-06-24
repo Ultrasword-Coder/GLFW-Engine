@@ -3,10 +3,12 @@
 
 #include "engine/engine.hpp"
 
+#include "engine/time.cpp"
 #include "engine/utils.cpp"
 #include "engine/window.cpp"
 
 #include "engine/graphics/shader.cpp"
+#include "engine/graphics/uniform_map.cpp"
 
 #include "engine/mesh/buffer_object.cpp"
 #include "engine/mesh/vao.cpp"
@@ -30,6 +32,11 @@ int main()
     // testing shaders
     Sora::Shader shader = Sora::load_shader_from_file("assets/shaders/default.glsl");
     shader.create();
+    shader.uploadFloat("utime", 0.5);
+
+    Sora::ShaderUtils::UniformMap u_map;
+    u_map.set_entry(shader.uniform_location("utime"), "utime");
+    std::cout << u_map.get_entry("utime") << std::endl;
 
     // vertices
     float vertices[] = {
@@ -43,10 +50,6 @@ int main()
     m_vao.create();
     m_vao.bind();
 
-    // unsigned int vao;
-    // glGenVertexArrays(1, &vao);
-    // glBindVertexArray(vao);
-
     Sora::BufferObject<float> vert(28, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
     vert.create();
     vert.bind();
@@ -55,8 +58,7 @@ int main()
 
     m_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7));
     m_vao.add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7));
-
-    m_vao.enable_attribs();
+    // m_vao.enable_attribs();
 
     // index stuff
     unsigned int indices[] = {
