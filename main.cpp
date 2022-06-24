@@ -92,8 +92,8 @@ int main()
         glClear(Sora::CLEAR_BITS);
 
         // update call
-        if (Sora::Input::is_key_pressed(GLFW_KEY_A))
-            std::cout << "A";
+        // if (Sora::Input::is_key_pressed(GLFW_KEY_A))
+        //     std::cout << "A";
 
         // render call
         shader.bind();
@@ -110,7 +110,7 @@ int main()
         Sora::Input::update();
         Sora::Time::update();
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
     m_vao.clean();
     vert.clean();
