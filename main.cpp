@@ -93,7 +93,7 @@ int main()
 
         // update call
         if (Sora::Input::is_key_pressed(GLFW_KEY_A))
-            std::cout << "AAAAAAAAAAAAAAAAAAAAAAA";
+            std::cout << "A";
 
         // render call
         shader.bind();

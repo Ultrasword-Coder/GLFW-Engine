@@ -15,7 +15,7 @@ namespace Sora
     // init glfw + glew
     static void error_callback(int error, const char *description)
     {
-        std::cout << "[OPENGL ERROR][engine.hpp] " << description << std::endl;
+        std::cout << "[Sora][OPENGL ERROR][engine.hpp] " << description << std::endl;
     }
 
     void init_engine(int verbose)
@@ -27,13 +27,13 @@ namespace Sora
         // output glfw version
         if (verbose > 0)
         {
-            std::cout << "[GLFWINIT][engine.hpp] GLFW Version: " << glfwGetVersionString() << std::endl;
+            std::cout << "[Sora][GLFWINIT][engine.hpp] GLFW Version: " << glfwGetVersionString() << std::endl;
         }
         // init glfw
         if (!glfwInit())
         {
-            std::cout << "[GLFWINIT][engine.hpp] GLFW failed to initialize!" << std::endl;
-            assert(!"[GLFWINIT][engine.hpp] GLFW failed to initialize!");
+            std::cout << "[Sora][GLFWINIT][engine.hpp] GLFW failed to initialize!" << std::endl;
+            assert(!"[Sora][GLFWINIT][engine.hpp] GLFW failed to initialize!");
         }
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -41,7 +41,7 @@ namespace Sora
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE); // set profile to core
         if (verbose > 1)
         {
-            std::cout << "[GLFWINIT][engine.hpp] Setting GLFW Context Version to 3.3 core" << std::endl;
+            std::cout << "[Sora][GLFWINIT][engine.hpp] Setting GLFW Context Version to 3.3 core" << std::endl;
         }
 
         // set error callback
@@ -59,14 +59,14 @@ namespace Sora
             // end window instance
             if (Sora::w_instance->window)
                 Sora::w_instance->clean();
-            std::cout << "[GLEWINIT][engine.hpp] Failed to initialize `GLEW`" << std::endl;
-            assert(!"[GLEWINIT][engine.hpp] GLEW Failed to initialize!");
+            std::cout << "[Sora][GLEWINIT][engine.hpp] Failed to initialize `GLEW`" << std::endl;
+            assert(!"[Sora][GLEWINIT][engine.hpp] GLEW Failed to initialize!");
         }
     }
 
     void clean_engine(int verbose)
     {
-        std::cout << "[GLFWTERMINATE][engine.hpp] Terminating GLFW!" << std::endl;
+        std::cout << "[Sora][GLFWTERMINATE][engine.hpp] Terminating GLFW!" << std::endl;
         glfwTerminate();
     }
 }

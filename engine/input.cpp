@@ -11,7 +11,7 @@ static void Sora::Input::key_callback(GLFWwindow *window, int key, int scancode,
     {
         Sora::Input::keyboard[key] = true;
         Sora::Input::keyboard_clicked.insert(key);
-        }
+    }
     else if (action == GLFW_RELEASE)
     {
         Sora::Input::keyboard[key] = false;
@@ -89,4 +89,10 @@ static void Sora::Input::update()
     Sora::Input::keyboard_clicked.clear();
     for (int i = 0; i < GLFW_MOUSE_KEYS; i++)
         Sora::Input::mouse_clicked[i] = false;
+}
+
+static void Sora::Input::clean(int verbose)
+{
+    Sora::Input::keyboard_clicked.clear();
+    std::cout << "[Sora][InputClean][input.cpp] Input (Keyboard and Mouse) has been cleaned!" << std::endl;
 }

@@ -45,4 +45,6 @@ namespace Sora::Input
     // update
     static void update();
 
+    static void clean(int verbose);
+
 }
