@@ -2,6 +2,10 @@
 
 #include <string>
 
+#define INT_ID typeid(int)
+#define UINT_ID typeid(uint)
+#define FLOAT_ID typeid(float)
+
 typedef unsigned int uint;
 
 namespace Sora

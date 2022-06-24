@@ -125,20 +125,12 @@ void Sora::Shader::uploadFloat(const char *name, float value) const
 template <typename T>
 void Sora::Shader::uploadValue(int pos, T value) const
 {
-    switch (typeid(value))
-    {
-    case typeid(float):
+    if (typeid(value) == FLOAT_ID)
         glUniform1f(pos, value);
-        break;
-    case typeid(int):
+    else if (typeid(value) == UINT_ID || typeid(value) == INT_ID)
         glUniform1i(pos, value);
-        break;
-    case typeid(uint):
-        glUniform1i(pos, value);
-        break;
-    default:
-        break;
-    }
+    else
+        std::cout << "[UNK-TYPE][shader.cpp] unknown type as of right now" << std::endl;
 }
 
 // load shader from file

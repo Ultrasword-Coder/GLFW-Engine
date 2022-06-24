@@ -5,14 +5,15 @@
 namespace Sora::Time
 {
     // ------------ pre def -------------- //
+    static void start();
     static float get_time();
     static float get_time_passed();
     static void update();
 
     // ------------ start -------------- //
 
-    float start_time = get_time();
-    float end_time = start_time;
+    float start_time;
+    float end_time;
 
     float wait_time = 0.0f;
     float delta_time = 0.0f;

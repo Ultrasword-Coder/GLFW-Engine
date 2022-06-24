@@ -32,19 +32,19 @@ int main()
     // testing shaders
     Sora::Shader shader = Sora::load_shader_from_file("assets/shaders/default.glsl");
     shader.create();
-    shader.uploadFloat("utime", 0.5);
+    shader.uploadFloat("utime", Sora::Time::get_time_passed());
 
     Sora::ShaderUtils::UniformMap u_map;
     u_map.set_entry(shader.uniform_location("utime"), "utime");
-    std::cout << u_map.get_entry("utime") << std::endl;
+    // std::cout << u_map.get_entry("utime") << std::endl;
 
     // vertices
     float vertices[] = {
         // bottom left, bototm right, top right, top left
-        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
+        -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
 
     Sora::VAO m_vao;
     m_vao.create();
@@ -80,6 +80,7 @@ int main()
     // ---- end setup --- //
 
     // game loop
+    Sora::Time::start();
     while (!glfwWindowShouldClose(Sora::w_instance->window))
     {
         // clear errors /  flush em out
@@ -90,6 +91,7 @@ int main()
 
         // render call
         shader.bind();
+        shader.uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
         m_vao.bind();
         m_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
@@ -99,6 +101,7 @@ int main()
 
         // update window
         window.update();
+        Sora::Time::update();
     }
 
     m_vao.clean();

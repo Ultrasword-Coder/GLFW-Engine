@@ -19,5 +19,5 @@ in vec4 fCol;
 uniform float utime;
 
 void main(){
-    gl_FragColor = vec4(fCol.xy, abs(sin(utime)), fCol.w);
+    gl_FragColor = vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
 }
