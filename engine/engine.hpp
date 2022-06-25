@@ -7,6 +7,25 @@
 
 #include "window.hpp"
 
+#if _WIN32 || _WIN64
+#if _WIN64
+#define _64BIT 1
+#else
+#define _32BIT 1
+#endif
+#endif
+
+// check GCC / G++
+#if __GNUC__
+#if __x86_64__ || __ppc64
+#define _64BIT 1
+#define _32BIT 0
+#else
+#define _32BIT 1
+#define _64BIT 0
+#endif
+#endif
+
 namespace Sora
 {
 
@@ -49,6 +68,12 @@ namespace Sora
         {
             std::cout << "[Sora][GLFWINIT][engine.hpp] Setting GLFW Context Version to 3.3 core" << std::endl;
         }
+
+        // if apple...
+#ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        std::cout << "[Sora][APPLE][engine.hpp] Using APPLE machine! OPENGL FORWARD COMPAT has been set to true!" << std::endl;
+#endif
 
         // set error callback
         glfwSetErrorCallback(error_callback);
