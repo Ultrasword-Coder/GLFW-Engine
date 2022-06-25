@@ -20,7 +20,9 @@ in vec2 fTex;
 
 uniform float utime;
 uniform sampler2D utex;
+uniform sampler2D utex2;
 
 void main(){
-    gl_FragColor = texture(utex, fTex) * vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
+    // gl_FragColor = texture(utex, fTex) * vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
+    gl_FragColor = mix(texture(utex2, fTex), texture(utex, fTex), abs(sin(utime)));
 }
