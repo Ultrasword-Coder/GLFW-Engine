@@ -37,16 +37,16 @@ int main()
     // testing shaders
     Sora::Shader shader = Sora::load_shader_from_file("assets/shaders/default.glsl");
     shader.create();
-    shader.uploadFloat("utime", Sora::Time::get_time_passed());
 
     Sora::ShaderUtils::UniformMap u_map;
     u_map.set_entry(shader.uniform_location("utime"), "utime");
-    u_map.set_entry(shader.uniform_location("utex"), "utex");
+    // u_map.set_entry(shader.uniform_location("utex"), "utex");
     // std::cout << u_map.get_entry("utime") << std::endl;
 
     // ---- create texture
     Sora::Texture2D tex("assets/images/image.jpeg");
     tex.create();
+    shader.uploadTexture2D("utex", &tex);
 
     // --- end texture
 
@@ -105,8 +105,8 @@ int main()
         //     std::cout << "A";
 
         // render call
-        tex.bind();
         shader.bind();
+        tex.bind();
         shader.uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
         m_vao.bind();
         m_vao.enable_attribs();
@@ -128,6 +128,7 @@ int main()
     index.clean();
     shader.unbind();
     shader.clean();
+    tex.clean();
 
     window.clean();
     Sora::clean_engine(Sora::VERY_VERBOSE);
