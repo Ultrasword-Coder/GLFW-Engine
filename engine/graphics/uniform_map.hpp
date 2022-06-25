@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <string>
 
-#include "../graphics/shader.cpp"
+#include "../engine.hpp"
 
 namespace Sora::ShaderUtils
 {

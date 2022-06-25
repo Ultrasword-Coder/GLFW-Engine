@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "texture.hpp"
+
 #define INT_ID typeid(int)
 #define UINT_ID typeid(uint)
 #define FLOAT_ID typeid(float)
@@ -37,6 +39,7 @@ namespace Sora
         void uploadBool(const char *, bool) const;
         void uploadInt(const char *, int) const;
         void uploadFloat(const char *, float) const;
+        void uploadTexture2D(const char *, Sora::Texture2D *tex) const;
 
         // implement matrix uploading and others
 

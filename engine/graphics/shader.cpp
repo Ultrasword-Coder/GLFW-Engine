@@ -121,6 +121,10 @@ void Sora::Shader::uploadFloat(const char *name, float value) const
 {
     glUniform1f(this->uniform_location(name), value);
 }
+void Sora::Shader::uploadTexture2D(const char *name, Sora::Texture2D *tex) const
+{
+    this->uploadInt(name, tex->get_id());
+}
 
 template <typename T>
 void Sora::Shader::uploadValue(int pos, T value) const

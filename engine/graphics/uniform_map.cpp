@@ -14,8 +14,8 @@ void Sora::ShaderUtils::UniformMap::set_entry(int uniform_position, std::string 
 {
     if (uniform_position < 0)
     {
-        std::cout << "[UNIFORM-ERROR][uniform_map.cpp] Uniform of name |" << name << "| could not be found within shader script!" << std::endl;
-        uniform_position = 0;
+        std::cout << "[Sora][UNIFORM-ERROR][uniform_map.cpp] Uniform of name |" << name << "| could not be found within shader script!" << std::endl;
+        Sora::terminate_engine();
     }
     uniforms[name] = uniform_position;
 }
