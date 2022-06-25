@@ -16,14 +16,16 @@ void Sora::Texture2D::create()
 {
     // gen id
     glGenTextures(1, &this->id);
-    this->bind();
+    glBindTexture(GL_TEXTURE_2D, this->id);
     // tex parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // load and generate texture
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *image_data = stbi_load(this->file, &this->width, &this->height, &this->channels, 0);
+
     if (!image_data)
     {
         std::cout << "[Sora][TEXTURE-CREATION][texture.cpp] Unable to load image from |" << this->file << "|" << std::endl;
@@ -34,13 +36,15 @@ void Sora::Texture2D::create()
     if (this->channels == 3) // jpg, jpeg, etc
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
-    else if (this->channels == 4)
+    else if (this->channels == 4) // png
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
     stbi_image_free(image_data);
-    this->unbind();
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Sora::Texture2D::clean()
