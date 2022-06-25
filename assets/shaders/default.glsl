@@ -16,10 +16,12 @@ void main(){
 #fragment
 #version 330 core
 in vec4 fCol;
+in vec2 fTex;
 
 uniform float utime;
 uniform sampler2D utex;
 
 void main(){
-    gl_FragColor = vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
+    utime + 1;
+    gl_FragColor = texture(utex, fTex);// * vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
 }
