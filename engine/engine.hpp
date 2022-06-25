@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cassert>
 
-#include "window.cpp"
+#include "window.hpp"
 
 namespace Sora
 {
@@ -16,6 +16,12 @@ namespace Sora
     static void error_callback(int error, const char *description)
     {
         std::cout << "[Sora][OPENGL ERROR][engine.hpp] " << description << std::endl;
+    }
+
+    void terminate_engine()
+    {
+        glfwSetWindowShouldClose(Sora::w_instance->window, 1);
+        std::cout << "[Sora][Terminate-Engine] Sora Engine is being terminated due to an issue that has arisen!" << std::endl;
     }
 
     void init_engine(int verbose)

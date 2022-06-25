@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <STB/stb_image.h>
 
 #include "engine/engine.hpp"
 
@@ -10,6 +11,7 @@
 
 #include "engine/graphics/shader.cpp"
 #include "engine/graphics/uniform_map.cpp"
+#include "engine/graphics/texture.cpp"
 
 #include "engine/mesh/buffer_object.cpp"
 #include "engine/mesh/vao.cpp"
@@ -18,8 +20,6 @@ typedef unsigned int uint;
 
 int main()
 {
-    std::cout << "Hello World" << std::endl;
-
     Sora::init_engine(Sora::VERY_VERBOSE);
     Sora::Window window;
     window.create();
@@ -41,15 +41,22 @@ int main()
 
     Sora::ShaderUtils::UniformMap u_map;
     u_map.set_entry(shader.uniform_location("utime"), "utime");
+    u_map.set_entry(shader.uniform_location("utex"), "utex");
     // std::cout << u_map.get_entry("utime") << std::endl;
+
+    // ---- create texture
+    Sora::Texture2D tex("assets/images/image.jpeg");
+    tex.create();
+
+    // --- end texture
 
     // vertices
     float vertices[] = {
         // bottom left, bototm right, top right, top left
-        -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
+        -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f};
 
     // index stuff
     unsigned int indices[] = {
@@ -60,16 +67,18 @@ int main()
     m_vao.create();
     m_vao.bind();
 
-    Sora::BufferObject<float> vert(28, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+    Sora::BufferObject<float> vert(36, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
     vert.create();
     vert.bind();
-    vert.set_data(vertices, 28);
+    vert.set_data(vertices, 36);
     vert.upload_data();
 
-    m_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7));
-    m_vao.add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7));
+    m_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9));
+    m_vao.add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 9));
+    m_vao.add_attribute(Sora::create_attribute(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 9));
 
-    Sora::BufferObject<uint> index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    Sora::BufferObject<uint>
+        index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
     index.create();
     index.bind();
     index.set_data(indices, 6);
@@ -96,12 +105,14 @@ int main()
         //     std::cout << "A";
 
         // render call
+        tex.bind();
         shader.bind();
         shader.uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
         m_vao.bind();
         m_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
         shader.unbind();
+        tex.unbind();
 
         glCheckError();
 
