@@ -22,6 +22,5 @@ uniform float utime;
 uniform sampler2D utex;
 
 void main(){
-    utime + 1;
-    gl_FragColor = texture(utex, fTex);// * vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
+    gl_FragColor = texture(utex, fTex) * vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
 }
