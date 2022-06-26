@@ -121,6 +121,7 @@ void Sora::Shader::uploadFloat(const char *name, float value) const
 {
     glUniform1f(this->uniform_location(name), value);
 }
+
 void Sora::Shader::uploadTexture2D(const char *name, Sora::Texture2D *tex) const
 {
     this->uploadInt(name, tex->get_id());
@@ -135,6 +136,37 @@ void Sora::Shader::uploadValue(int pos, T value) const
         glUniform1i(pos, value);
     else
         std::cout << "[UNK-TYPE][shader.cpp] unknown type as of right now" << std::endl;
+}
+
+// matrix uniform upload
+void Sora::Shader::uploadVec2(const char *name, glm::vec2 vec)
+{
+    glUniform2f(this->uniform_location(name), vec.x, vec.y);
+}
+
+void Sora::Shader::uploadVec3(const char *name, glm::vec3 vec)
+{
+    glUniform3f(this->uniform_location(name), vec.x, vec.y, vec.z);
+}
+
+void Sora::Shader::uploadVec4(const char *name, glm::vec4 vec)
+{
+    glUniform4f(this->uniform_location(name), vec.x, vec.y, vec.z, vec.w);
+}
+
+void Sora::Shader::uploadMat2(const char *name, glm::mat2 mat)
+{
+    glUniformMatrix2fv(this->uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Sora::Shader::uploadMat3(const char *name, glm::mat3 mat)
+{
+    glUniformMatrix3fv(this->uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Sora::Shader::uploadMat4(const char *name, glm::mat4 mat)
+{
+    glUniformMatrix4fv(this->uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 // load shader from file

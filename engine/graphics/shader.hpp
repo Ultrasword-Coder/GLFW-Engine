@@ -1,5 +1,9 @@
 #pragma once
 
+#include <GLM/glm.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
+
 #include <string>
 
 #include "texture.hpp"
@@ -42,6 +46,13 @@ namespace Sora
         void uploadTexture2D(const char *, Sora::Texture2D *tex) const;
 
         // implement matrix uploading and others
+        void uploadVec2(const char *, glm::vec2);
+        void uploadVec3(const char *, glm::vec3);
+        void uploadVec4(const char *, glm::vec4);
+
+        void uploadMat2(const char *, glm::mat2);
+        void uploadMat3(const char *, glm::mat3);
+        void uploadMat4(const char *, glm::mat4);
 
         // upload given position
         template <typename T>
