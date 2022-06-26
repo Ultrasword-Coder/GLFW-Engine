@@ -6,9 +6,14 @@
 #include "window.hpp"
 
 // static methods
-void set_clear_bits(int bits)
+void Sora::set_clear_bits(int bits)
 {
     Sora::CLEAR_BITS = bits;
+}
+
+void Sora::set_clear_color(float r, float g, float b, float a)
+{
+    glClearColor(r, g, b, a);
 }
 
 // window

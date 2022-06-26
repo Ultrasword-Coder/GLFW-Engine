@@ -10,6 +10,7 @@ namespace Sora
 
     // static methods
     static void set_clear_bits(int bits);
+    static void set_clear_color(float, float, float, float);
 
     // window class
     class Window

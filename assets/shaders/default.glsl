@@ -17,6 +17,9 @@ void main(){
 
 #fragment
 #version 330 core
+
+#define PI 3.1415
+
 in vec4 fCol;
 in vec2 fTex;
 
@@ -24,9 +27,12 @@ uniform float utime;
 uniform sampler2D utex;
 uniform sampler2D utex2;
 
+vec4 alpha1, alpha2;
+float off;
+
 void main(){
-    // gl_FragColor = texture(utex, fTex) * vec4(fCol.x, abs(sin(utime)), abs(cos(utime)),  fCol.w);
-    // vec2 tpos = vec2(fTex.x + tan(utime), fTex.y + tan(utime));
-    vec2 tpos = fTex;
-    gl_FragColor = mix(texture(utex2, tpos), texture(utex, tpos), abs(sin(utime)));
+    off = sin(utime) + cos(fTex.y * PI * 10)/50;
+    vec2 tpos = vec2(fTex.x + off, fTex.y);
+    alpha1 = texture(utex2, tpos); alpha2 = texture(utex, tpos);
+    gl_FragColor = mix(alpha1, alpha2, abs(sin(utime)));
 }
