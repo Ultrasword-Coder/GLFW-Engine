@@ -12,6 +12,8 @@
 #include "../utils.hpp"
 #include "shader.hpp"
 
+Sora::Shader::Shader() {}
+
 Sora::Shader::Shader(const char *file)
 {
     // parse shader strings
@@ -31,6 +33,8 @@ void Sora::Shader::set_shader_code(std::string vert_code, std::string frag_code)
 
 void Sora::Shader::create()
 {
+    if (this->created)
+        return;
     uint vs, fs;
     vs = compile_shader(GL_VERTEX_SHADER, vert_shader.c_str());
     fs = compile_shader(GL_FRAGMENT_SHADER, frag_shader.c_str());
@@ -56,14 +60,17 @@ void Sora::Shader::create()
         std::cout << "[ValidateShaderProgram][shader.cpp] Failed to validate Shader program!\nShaderSource: :" << filepath << std::endl;
         assert(!"[ValidateShaderProgram][shader.cpp] Failed to validate shader program!");
     }
+
     // free memory
     glDeleteShader(vs);
     glDeleteShader(fs);
+    this->created = true;
 }
 
 void Sora::Shader::clean()
 {
     glDeleteProgram(this->program);
+    this->unbind();
 }
 
 void Sora::Shader::bind()
@@ -74,6 +81,11 @@ void Sora::Shader::bind()
 void Sora::Shader::unbind()
 {
     glUseProgram(0);
+}
+
+const char *Sora::Shader::get_file()
+{
+    return this->filepath;
 }
 
 uint Sora::Shader::compile_shader(uint type, const char *shader)
@@ -210,6 +222,5 @@ Sora::Shader Sora::load_shader_from_file(const char *filepath)
 
     Sora::Shader result(filepath);
     result.set_shader_code(vertex.str(), fragment.str());
-
     return result;
 }

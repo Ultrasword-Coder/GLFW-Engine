@@ -25,8 +25,10 @@ namespace Sora
         const char *filepath;
         std::string vert_shader, frag_shader;
         uint program;
+        bool created = false;
 
     public:
+        Shader();
         Shader(const char *);
         ~Shader();
 
@@ -35,6 +37,7 @@ namespace Sora
         void clean();
         void bind();
         void unbind();
+        const char *get_file();
 
         uint compile_shader(uint, const char *);
 

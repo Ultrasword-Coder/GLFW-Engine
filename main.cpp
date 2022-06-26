@@ -10,6 +10,8 @@
 #include "engine/window.cpp"
 #include "engine/input.cpp"
 
+#include "engine/handler/filehandler.cpp"
+
 #include "engine/graphics/shader.cpp"
 #include "engine/graphics/uniform_map.cpp"
 #include "engine/graphics/texture.cpp"
@@ -39,31 +41,31 @@ int main()
 
     // ----- setup ---- //
     // testing shaders
-    Sora::Shader shader = Sora::load_shader_from_file("assets/shaders/default.glsl");
-    shader.create();
-    shader.bind();
+    Sora::Shader *shader = Sora::Filehandler::get_shader("assets/shaders/default.glsl");
+    /* TWAS A STUPID ERROR ONCE BEFORE
+        We just skip and if problems arise do something abt it :)
+     */
+    glClearError();
+    shader->bind();
 
     Sora::ShaderUtils::UniformMap u_map;
-    u_map.set_entry(shader.uniform_location("utime"), "utime");
+    u_map.set_entry(shader->uniform_location("utime"), "utime");
 
     // ---- create texture
-    Sora::Texture2D tex("assets/images/tilemap.png");
-    tex.create();
+    Sora::Texture2D *tex = Sora::Filehandler::get_texture("assets/images/tilemap.png");
 
     // bind texture once for now
     glActiveTexture(GL_TEXTURE0);
-    tex.bind();
-    shader.uploadInt("utex", 0);
-    tex.unbind();
+    tex->bind();
+    shader->uploadInt("utex", 0);
+    tex->unbind();
 
-    Sora::Texture2D tex2("assets/images/jirachi.jpg");
-    tex2.create();
+    Sora::Texture2D *tex2 = Sora::Filehandler::get_texture("assets/images/jirachi.jpg");
 
     glActiveTexture(GL_TEXTURE1);
-    tex2.bind();
-    shader.uploadInt("utex2", 1);
-    tex2.unbind();
-
+    tex2->bind();
+    shader->uploadInt("utex2", 1);
+    tex2->unbind();
     // --- end texture
 
     // ----- glm testing ---- //
@@ -72,8 +74,8 @@ int main()
     // rotate
     GLMUtils::output_mat4(trans);
 
-    shader.bind();
-    shader.uploadMat4("transform", trans);
+    shader->bind();
+    shader->uploadMat4("transform", trans);
 
     // --- end glm ---- //
 
@@ -85,12 +87,10 @@ int main()
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, // bottom left
         -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f   // top left
     };
-
     // index stuff
     unsigned int indices[] = {
         0, 1, 3,
         1, 2, 3};
-
     // create objects
     Sora::VAO m_vao;
     m_vao.create();
@@ -132,20 +132,20 @@ int main()
 
         // render call
         glActiveTexture(GL_TEXTURE0);
-        tex.bind();
+        tex->bind();
         glActiveTexture(GL_TEXTURE1);
-        tex2.bind();
-        shader.bind();
-        shader.uploadMat4("transform", trans);
-        shader.uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
+        tex2->bind();
+        shader->bind();
+        shader->uploadMat4("transform", trans);
+        shader->uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
         m_vao.bind();
         m_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
         m_vao.disable_attribs();
         m_vao.unbind();
-        shader.unbind();
-        tex.unbind();
-        tex2.unbind();
+        shader->unbind();
+        tex->unbind();
+        tex2->unbind();
 
         glCheckError();
 
@@ -159,10 +159,7 @@ int main()
     m_vao.clean();
     vert.clean();
     index.clean();
-    shader.unbind();
-    shader.clean();
-    tex.clean();
-    tex2.clean();
+    Sora::Filehandler::clean(Sora::VERY_VERBOSE);
 
     window.clean();
     Sora::clean_engine(Sora::VERY_VERBOSE);

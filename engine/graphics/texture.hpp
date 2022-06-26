@@ -18,6 +18,7 @@ namespace Sora
         const char *file;
 
     public:
+        Texture2D();
         Texture2D(const char *file);
         ~Texture2D();
 
@@ -28,5 +29,6 @@ namespace Sora
         int get_width();
         int get_height();
         uint get_id();
+        const char * get_file();
     };
 }

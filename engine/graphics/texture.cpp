@@ -3,6 +3,8 @@
 #include "../engine.hpp"
 #include "texture.hpp"
 
+Sora::Texture2D::Texture2D() {}
+
 Sora::Texture2D::Texture2D(const char *file) : file(file)
 {
 }
@@ -75,4 +77,9 @@ int Sora::Texture2D::get_height()
 uint Sora::Texture2D::get_id()
 {
     return this->id;
+}
+
+const char *Sora::Texture2D::get_file()
+{
+    return this->file;
 }
