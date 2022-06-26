@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <STB/stb_image.h>
 #include <glm/glm.hpp>
+#include <IRK/irrKlang.h>
 
 #include "engine/engine.hpp"
 
@@ -40,6 +41,11 @@ int main()
     glfwSetScrollCallback(Sora::w_instance->window, Sora::Input::mouse_scroll_callback);
 
     // ----- setup ---- //
+    // ---- irrklang ----
+    irrklang::ISoundEngine *sound_engine = irrklang::createIrrKlangDevice();
+    sound_engine->play2D("assets/audio/breakout.mp3", false);
+    // ---- end irrklang ---
+
     // testing shaders
     Sora::Shader *shader = Sora::Filehandler::get_shader("assets/shaders/default.glsl");
     /* TWAS A STUPID ERROR ONCE BEFORE
@@ -160,6 +166,7 @@ int main()
     vert.clean();
     index.clean();
     Sora::Filehandler::clean(Sora::VERY_VERBOSE);
+    sound_engine->drop();
 
     window.clean();
     Sora::clean_engine(Sora::VERY_VERBOSE);
