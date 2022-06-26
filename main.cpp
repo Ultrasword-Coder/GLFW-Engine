@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <STB/stb_image.h>
-#include <GLM/glm.hpp>
+#include <glm/glm.hpp>
 
 #include "engine/engine.hpp"
 
@@ -21,6 +21,9 @@ typedef unsigned int uint;
 
 int main()
 {
+    // ----- just floating point stuff ------
+    set_io_floating_precision(3);
+    // --------------------------------------
     Sora::init_engine(Sora::VERY_VERBOSE);
     Sora::Window window;
     window.create();
@@ -42,8 +45,6 @@ int main()
 
     Sora::ShaderUtils::UniformMap u_map;
     u_map.set_entry(shader.uniform_location("utime"), "utime");
-    // u_map.set_entry(shader.uniform_location("utex"), "utex");
-    // std::cout << u_map.get_entry("utime") << std::endl;
 
     // ---- create texture
     Sora::Texture2D tex("assets/images/tilemap.png");
@@ -65,13 +66,24 @@ int main()
 
     // --- end texture
 
+    // ----- glm testing ---- //
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(0.0f, 0.0f, 0.0f));
+    // rotate
+    GLMUtils::output_mat4(trans);
+
+    shader.bind();
+    shader.uploadMat4("transform", trans);
+
+    // --- end glm ---- //
+
     // vertices
     float vertices[] = {
         // positions          // colors           // texture coords
-        1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // top right
-        1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // bottom right
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, // bottom left
-        -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f   // top left
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f   // top left
     };
 
     // index stuff
@@ -107,6 +119,7 @@ int main()
     // ---- end setup --- //
 
     // game loop
+    Sora::set_clear_color(0.6f, 0.0f, 0.2f, 1.0f);
     Sora::Time::start();
     while (!glfwWindowShouldClose(Sora::w_instance->window))
     {
@@ -115,8 +128,7 @@ int main()
         glClear(Sora::CLEAR_BITS);
 
         // update call
-        // if (Sora::Input::is_key_pressed(GLFW_KEY_A))
-        //     std::cout << "A";
+        trans = glm::rotate(trans, Sora::Time::delta_time, glm::vec3(0.0f, 0.0f, 1.0f));
 
         // render call
         glActiveTexture(GL_TEXTURE0);
@@ -124,6 +136,7 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         tex2.bind();
         shader.bind();
+        shader.uploadMat4("transform", trans);
         shader.uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
         m_vao.bind();
         m_vao.enable_attribs();
