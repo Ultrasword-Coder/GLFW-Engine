@@ -58,3 +58,37 @@ void SoraIO::File::clean()
     this->s_file.close();
     this->r_file.close();
 }
+
+// glm utils
+void GLMUtils::output_vec2(glm::vec2 vec)
+{
+    std::cout << vec.x << " " << vec.y << std::endl;
+}
+
+void GLMUtils::output_vec3(glm::vec3 vec)
+{
+    std::cout << vec.x << " " << vec.y << " " << vec.z << std::endl;
+}
+
+void GLMUtils::output_vec4(glm::vec4 vec)
+{
+    std::cout << vec.x << " " << vec.y << " " << vec.z << " " << vec.w << std::endl;
+}
+
+void GLMUtils::output_mat2(glm::mat2 mat)
+{
+    for (int i = 0; i < mat.length(); i++)
+        std::cout << mat[i].x << " " << mat[i].y << std::endl;
+}
+
+void GLMUtils::output_mat3(glm::mat3 mat)
+{
+    for (int i = 0; i < mat.length(); i++)
+        std::cout << mat[i].x << " " << mat[i].y << " " << mat[i].z << std::endl;
+}
+
+void GLMUtils::output_mat4(glm::mat4 mat)
+{
+    for (int i = 0; i < mat.length(); i++)
+        std::cout << mat[i].x << " " << mat[i].y << " " << mat[i].z << " " << mat[i].w << std::endl;
+}
