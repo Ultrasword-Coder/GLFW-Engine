@@ -31,6 +31,8 @@ namespace Sora
         void update();
         void clean();
         void set_focus();
+        int get_width();
+        int get_height();
 
         // -------- static --------- //
         static void window_size_callback(GLFWwindow *window, int width, int height);

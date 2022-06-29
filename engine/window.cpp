@@ -75,6 +75,16 @@ void Sora::Window::set_focus()
     Sora::w_instance = this;
 }
 
+int Sora::Window::get_width()
+{
+    return this->width;
+}
+
+int Sora::Window::get_height()
+{
+    return this->height;
+}
+
 void Sora::Window::window_size_callback(GLFWwindow *window, int width, int height)
 {
     // std::cout << "window resized to\tw:" << width << "|h: " << height << std::endl;

@@ -2,7 +2,6 @@
 #include <GLFW/glfw3.h>
 #include <STB/stb_image.h>
 #include <glm/glm.hpp>
-#include <IRK/irrKlang.h>
 
 #include "engine/engine.hpp"
 
@@ -19,6 +18,8 @@
 
 #include "engine/mesh/buffer_object.cpp"
 #include "engine/mesh/vao.cpp"
+
+#include "engine/components/transform.cpp"
 
 typedef unsigned int uint;
 
@@ -41,16 +42,14 @@ int main()
     glfwSetScrollCallback(Sora::w_instance->window, Sora::Input::mouse_scroll_callback);
 
     // ----- setup ---- //
-    // ---- irrklang ----
-    irrklang::ISoundEngine *sound_engine = irrklang::createIrrKlangDevice();
-    sound_engine->play2D("assets/audio/breakout.mp3", false);
-    // ---- end irrklang ---
+    Sora::Transform transform;
+    transform.update();
 
     // testing shaders
     Sora::Shader *shader = Sora::Filehandler::get_shader("assets/shaders/default.glsl");
     /* TWAS A STUPID ERROR ONCE BEFORE
         We just skip and if problems arise do something abt it :)
-     */
+    */
     glClearError();
     shader->bind();
 
@@ -142,8 +141,10 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         tex2->bind();
         shader->bind();
+        // upload variables
         shader->uploadMat4("transform", trans);
         shader->uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
+        // vertex array object
         m_vao.bind();
         m_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
@@ -166,7 +167,6 @@ int main()
     vert.clean();
     index.clean();
     Sora::Filehandler::clean(Sora::VERY_VERBOSE);
-    sound_engine->drop();
 
     window.clean();
     Sora::clean_engine(Sora::VERY_VERBOSE);

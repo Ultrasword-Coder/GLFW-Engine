@@ -48,6 +48,7 @@ namespace Sora
         /*
             Initiates GLFW library
             - shoule be first function called in program
+            Initiates the openAL library
         */
         // output glfw version
         if (verbose > 0)
@@ -77,6 +78,10 @@ namespace Sora
 
         // set error callback
         glfwSetErrorCallback(error_callback);
+
+        // ------- openal init -----
+
+        // -------------------------
     }
 
     void init_glew(int verbose)
