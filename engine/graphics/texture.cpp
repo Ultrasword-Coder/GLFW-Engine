@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../engine.hpp"
 #include "texture.hpp"
 
 Sora::Texture2D::Texture2D() {}
@@ -9,10 +8,7 @@ Sora::Texture2D::Texture2D(const char *file) : file(file)
 {
 }
 
-Sora::Texture2D::~Texture2D()
-{
-    this->clean();
-}
+Sora::Texture2D::~Texture2D() {}
 
 void Sora::Texture2D::create()
 {

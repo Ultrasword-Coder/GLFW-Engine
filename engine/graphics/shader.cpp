@@ -20,10 +20,7 @@ Sora::Shader::Shader(const char *file)
     this->filepath = file;
 }
 
-Sora::Shader::~Shader()
-{
-    this->clean();
-}
+Sora::Shader::~Shader() {}
 
 void Sora::Shader::set_shader_code(std::string vert_code, std::string frag_code)
 {
@@ -36,9 +33,9 @@ void Sora::Shader::create()
     if (this->created)
         return;
     uint vs, fs;
+
     vs = compile_shader(GL_VERTEX_SHADER, vert_shader.c_str());
     fs = compile_shader(GL_FRAGMENT_SHADER, frag_shader.c_str());
-
     program = glCreateProgram();
 
     glAttachShader(program, vs);
@@ -91,7 +88,7 @@ const char *Sora::Shader::get_file()
 uint Sora::Shader::compile_shader(uint type, const char *shader)
 {
     uint id = glCreateShader(type);
-    glShaderSource(id, 1, &shader, nullptr);
+    glShaderSource(id, 1, &shader, NULL);
     glCompileShader(id);
 
     // error handling for compilation
@@ -107,7 +104,7 @@ uint Sora::Shader::compile_shader(uint type, const char *shader)
         // output the info
         std::cout << "[SHADER-COMPILE][shader.cpp] Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << "shader!\n"
                   << message << std::endl;
-        assert(!"[SHADER-COMPILE][shader.cpp] Failed to compile shader!");
+        assert(false);
     }
     return id;
 }
@@ -219,7 +216,6 @@ Sora::Shader Sora::load_shader_from_file(const char *filepath)
     // std::cout << "VertexCode:\n"
     //           << vertex.str() << "\nFragmentCode:\n"
     //           << fragment.str() << std::endl;
-
     Sora::Shader result(filepath);
     result.set_shader_code(vertex.str(), fragment.str());
     return result;

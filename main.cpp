@@ -46,9 +46,6 @@ int main()
     // ----- setup ---- //
     // testing shaders
     Sora::Shader *shader = Sora::Filehandler::get_shader("assets/shaders/default.glsl");
-    /* TWAS A STUPID ERROR ONCE BEFORE
-        We just skip and if problems arise do something abt it :)
-    */
     shader->bind();
 
     Sora::ShaderUtils::UniformMap u_map;
@@ -83,7 +80,6 @@ int main()
     shader->bind();
     shader->uploadMat4("view", camera.get_view());
     shader->uploadMat4("proj", camera.get_proj());
-
     // --- end glm ---- //
 
     // vertices
@@ -127,15 +123,14 @@ int main()
 
     Sora::Shader *f_shader = Sora::Filehandler::get_shader("assets/shaders/floor.glsl");
     f_shader->bind();
-
     Sora::Texture2D *f_tex = Sora::Filehandler::get_texture("assets/images/floor.png");
 
-    glCheckError();
-    std::cout << "error1" << std::endl;
+    std::cout << __FILE__ << " " << __LINE__ << std::endl;
+    // big issue with glactive texture
 
     glActiveTexture(GL_TEXTURE0);
     f_tex->bind();
-    f_shader->uploadTexture2D("tex", 0);
+    f_shader->uploadInt("tex", 0);
     f_tex->unbind();
     f_shader->uploadMat4("proj", camera.get_proj());
     f_shader->unbind();
@@ -155,7 +150,7 @@ int main()
     f_vert.set_data(floor_vertices, 20);
     f_vert.upload_data();
     f_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, vertex_size_bytes, 0));
-    f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, 8));
+    f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, 12));
     Sora::BufferObject<uint> f_index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
     f_index.create();
     f_index.bind();

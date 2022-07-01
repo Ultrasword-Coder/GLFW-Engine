@@ -5,6 +5,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <STB/stb_image.h>
 
+#include "../engine.hpp"
+#include "../utils.hpp"
+
 typedef unsigned int uint;
 
 namespace Sora
@@ -29,6 +32,6 @@ namespace Sora
         int get_width();
         int get_height();
         uint get_id();
-        const char * get_file();
+        const char *get_file();
     };
 }
