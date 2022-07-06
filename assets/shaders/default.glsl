@@ -7,11 +7,13 @@ layout(location=2) in vec2 vTex;
 uniform mat4 proj;
 uniform mat4 view;
 
+uniform float utime;
+
 out vec4 fCol;
 out vec2 fTex;
 
 void main(){
-    gl_Position = proj * view * vec4(vPos, 1.0);
+    gl_Position = proj * view * vec4(vPos - vec3(0.0, 3* sin(utime) ,0.0), 1.0);
     fCol = vCol;
     fTex = vTex;
 }

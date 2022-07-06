@@ -32,9 +32,9 @@ glm::vec3 SoraEngine::Camera::get_up()
     return this->camera_up;
 }
 
-glm::vec3 SoraEngine::Camera::get_right()
+glm::vec3 SoraEngine::Camera::get_left()
 {
-    return this->camera_right;
+    return this->camera_left;
 }
 
 glm::mat4 SoraEngine::Camera::get_view()
@@ -93,9 +93,9 @@ void SoraEngine::Camera2D::calculate_vectors()
     // rdirection
     this->rdirection = glm::normalize(this->position - this->target);
     // camera right
-    this->camera_right = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
+    this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
     // camera up
-    this->camera_up = glm::cross(this->rdirection, this->camera_right);
+    this->camera_up = glm::cross(this->rdirection, this->camera_left);
 }
 
 void SoraEngine::Camera2D::update_projection()
@@ -126,9 +126,9 @@ void SoraEngine::Camera3D::calculate_vectors()
     // rdirection
     this->rdirection = glm::normalize(this->position - this->target);
     // camera right
-    this->camera_right = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
+    this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
     // camera up
-    this->camera_up = glm::cross(this->rdirection, this->camera_right);
+    this->camera_up = glm::cross(this->rdirection, this->camera_left);
 }
 
 void SoraEngine::Camera3D::update_projection()

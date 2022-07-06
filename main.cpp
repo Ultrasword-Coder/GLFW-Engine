@@ -15,6 +15,7 @@
 #include "engine/graphics/shader.cpp"
 #include "engine/graphics/uniform_map.cpp"
 #include "engine/graphics/texture.cpp"
+#include "engine/graphics/framebuffer.cpp"
 
 #include "engine/mesh/buffer_object.cpp"
 #include "engine/mesh/vao.cpp"
@@ -124,8 +125,6 @@ int main()
     Sora::Shader *f_shader = Sora::Filehandler::get_shader("assets/shaders/floor.glsl");
     f_shader->bind();
     Sora::Texture2D *f_tex = Sora::Filehandler::get_texture("assets/images/floor.png");
-
-    std::cout << __FILE__ << " " << __LINE__ << std::endl;
     // big issue with glactive texture
 
     glActiveTexture(GL_TEXTURE0);
@@ -135,12 +134,12 @@ int main()
     f_shader->uploadMat4("proj", camera.get_proj());
     f_shader->unbind();
 
-    float floor_vertices[] = {
-        // position            // texcoords
-        1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
-        -1.0f, 1.0f, -1.0f, 0.0f, 1.0f};
+    float floor_vertices[] = {//  top right, bototm right, bottomleft, top left
+                              // position            // texcoords
+                              2.0f, -3.0f, 2.0f, 1.0f, 1.0f,
+                              2.0f, -0.0f, -2.0f, 1.0f, -1.0f,
+                              -2.0f, -0.0f, -2.0f, -1.0f, -1.0f,
+                              -2.0f, -3.0f, 2.0f, 0.0f, 1.0f};
     Sora::VAO f_vao;
     f_vao.create();
     f_vao.bind();
@@ -149,8 +148,8 @@ int main()
     f_vert.bind();
     f_vert.set_data(floor_vertices, 20);
     f_vert.upload_data();
-    f_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, vertex_size_bytes, 0));
-    f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, 12));
+    f_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
+    f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
     Sora::BufferObject<uint> f_index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
     f_index.create();
     f_index.bind();
@@ -162,30 +161,84 @@ int main()
     f_vert.unbind();
     f_index.unbind();
 
+    // ---- framebuffer --- //
+    Sora::FrameBuffer framebuffer(1280, 720, 4);
+    framebuffer.create();
+    framebuffer.bind();
+    glEnable(GL_DEPTH_TEST);
+    framebuffer.unbind();
+
+    Sora::Texture2D *frame_image = framebuffer.get_frame();
+
     // ---- end setup --- //
 
     // game loop
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
+    Sora::set_clear_bits(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Sora::set_clear_color(0.6f, 0.0f, 0.2f, 1.0f);
     Sora::Time::start();
     while (!glfwWindowShouldClose(Sora::w_instance->window))
     {
         // clear errors /  flush em out
         glCheckError();
+        glClearColor(0.6f, 0.0f, 0.2f, 1.0f);
         glClear(Sora::CLEAR_BITS);
 
         // update call
         if (Sora::Input::is_key_pressed(GLFW_KEY_W))
-            pos.z -= 5.0f * Sora::Time::delta_time;
+        {
+            // move forward
+            pos += camera.get_rdirection() * 5.0f * Sora::Time::delta_time;
+            // pos.z -= 5.0f * Sora::Time::delta_time;
+        }
         if (Sora::Input::is_key_pressed(GLFW_KEY_S))
-            pos.z += 5.0f * Sora::Time::delta_time;
+        {
+            pos += camera.get_rdirection() * -5.0f * Sora::Time::delta_time;
+            // pos.z += 5.0f * Sora::Time::delta_time;
+        }
         if (Sora::Input::is_key_pressed(GLFW_KEY_A))
-            pos.x -= 5.0f * Sora::Time::delta_time;
+        {
+            pos += camera.get_left() * 5.0f * Sora::Time::delta_time;
+            // pos.x -= 5.0f * Sora::Time::delta_time;
+        }
         if (Sora::Input::is_key_pressed(GLFW_KEY_D))
-            pos.x += 5.0f * Sora::Time::delta_time;
+        {
+            pos += camera.get_left() * -5.0f * Sora::Time::delta_time;
+            // pos.x += 5.0f * Sora::Time::delta_time;
+        }
         camera.set_position(pos);
         camera.update();
 
         // render call
+        // framebuffer render
+        framebuffer.bind();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(Sora::CLEAR_BITS);
+        // gigachad render
+        glActiveTexture(GL_TEXTURE0);
+        tex->bind();
+        glActiveTexture(GL_TEXTURE1);
+        tex2->bind();
+        shader->bind();
+        // upload variables
+        shader->uploadMat4("view", camera.get_view());
+        shader->uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
+        // vertex array object
+        m_vao.bind();
+        m_vao.enable_attribs();
+        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
+        m_vao.disable_attribs();
+        m_vao.unbind();
+        shader->unbind();
+        tex->unbind();
+        tex2->unbind();
+
+        glCheckError();
+        // end gigachad
+        framebuffer.unbind();
+
         glActiveTexture(GL_TEXTURE0);
         tex->bind();
         glActiveTexture(GL_TEXTURE1);
@@ -208,7 +261,9 @@ int main()
 
         // render ground
         glActiveTexture(GL_TEXTURE0);
-        f_tex->bind();
+        // empty.bind();
+        // f_tex->bind();
+        frame_image->bind();
         f_shader->bind();
         f_shader->uploadMat4("view", camera.get_view());
         f_vao.bind();
@@ -217,7 +272,9 @@ int main()
         f_vao.disable_attribs();
         f_vao.unbind();
         f_shader->unbind();
-        f_tex->unbind();
+        // empty.unbind();
+        // f_tex->unbind();
+        frame_image->unbind();
 
         glCheckError();
 
@@ -234,6 +291,7 @@ int main()
     f_vao.clean();
     f_vert.clean();
     f_index.clean();
+    framebuffer.clean();
     Sora::Filehandler::clean(Sora::VERY_VERBOSE);
 
     window.clean();

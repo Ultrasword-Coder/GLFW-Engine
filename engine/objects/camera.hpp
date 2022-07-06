@@ -12,7 +12,7 @@ namespace SoraEngine
     protected:
         float width, height, near, far;
         glm::vec3 position, target, rdirection;
-        glm::vec3 camera_right, camera_up;
+        glm::vec3 camera_left, camera_up;
         glm::mat4 view, proj;
 
     public:
@@ -28,7 +28,7 @@ namespace SoraEngine
         glm::vec3 get_rdirection();
         glm::vec3 get_target();
         glm::vec3 get_up();
-        glm::vec3 get_right();
+        glm::vec3 get_left();
         glm::mat4 get_view();
         glm::mat4 get_proj();
 
