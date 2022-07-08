@@ -30,6 +30,7 @@ namespace Sora
 {
 
     const int VERBOSE = 1, VERY_VERBOSE = 2;
+    GLint MAX_TEXTURES_AT_ONCE;
 
     // init glfw + glew
     static void error_callback(int error, const char *description)
@@ -79,9 +80,9 @@ namespace Sora
         // set error callback
         glfwSetErrorCallback(error_callback);
 
-        // ------- openal init -----
+        // ------- openal init ----- //
 
-        // -------------------------
+        // ------------------------- //
     }
 
     void init_glew(int verbose)
@@ -98,6 +99,13 @@ namespace Sora
             std::cout << "[Sora][GLEWINIT][engine.hpp] Failed to initialize `GLEW`" << std::endl;
             assert(!"[Sora][GLEWINIT][engine.hpp] GLEW Failed to initialize!");
         }
+    }
+
+    void collect_engine_data(int verbose)
+    {
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Sora::MAX_TEXTURES_AT_ONCE);
+        if (verbose > 1)
+            std::cout << "[Sora][HWData][FragmentShaderTextures] This device can access `" << Sora::MAX_TEXTURES_AT_ONCE << "` textures in the fragment shader!" << std::endl;
     }
 
     void clean_engine(int verbose)

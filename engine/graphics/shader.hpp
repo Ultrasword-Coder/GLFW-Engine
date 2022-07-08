@@ -57,6 +57,9 @@ namespace Sora
         void uploadMat3(const char *, glm::mat3);
         void uploadMat4(const char *, glm::mat4);
 
+        void uploadIntArray(const char *, int count, int *values);
+        void uploadUIntArray(const char *, int count, uint *values);
+
         // upload given position
         template <typename T>
         void uploadValue(int pos, T value) const;

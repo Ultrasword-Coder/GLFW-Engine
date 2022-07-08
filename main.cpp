@@ -10,8 +10,6 @@
 #include "engine/window.cpp"
 #include "engine/input.cpp"
 
-#include "engine/handler/filehandler.cpp"
-
 #include "engine/graphics/shader.cpp"
 #include "engine/graphics/uniform_map.cpp"
 #include "engine/graphics/texture.cpp"
@@ -19,6 +17,9 @@
 
 #include "engine/mesh/buffer_object.cpp"
 #include "engine/mesh/vao.cpp"
+
+#include "engine/handler/filehandler.cpp"
+#include "engine/handler/texuploadhandler.cpp"
 
 #include "engine/components/transform.cpp"
 
@@ -35,6 +36,7 @@ int main()
     Sora::Window window;
     window.create();
     Sora::init_glew(Sora::VERY_VERBOSE);
+    Sora::collect_engine_data(Sora::VERY_VERBOSE);
 
     // window event callbacks
     glfwSetWindowSizeCallback(Sora::w_instance->window, Sora::Window::window_size_callback);
@@ -54,19 +56,41 @@ int main()
 
     // ---- create texture
     Sora::Texture2D *tex = Sora::Filehandler::get_texture("assets/images/img1.png");
-
-    // bind texture once for now
-    glActiveTexture(GL_TEXTURE0);
-    tex->bind();
-    shader->uploadInt("utex", 0);
-    tex->unbind();
-
     Sora::Texture2D *tex2 = Sora::Filehandler::get_texture("assets/images/img2.png");
 
-    glActiveTexture(GL_TEXTURE1);
-    tex2->bind();
-    shader->uploadInt("utex2", 1);
-    tex2->unbind();
+    /*
+        NEXT TIME --
+        MOVE TEXTURE UPLOADING INTO THE ALREADY MADE STRUCT
+        the Sora::TexUploadHandler::TexUpload object!!!
+    */
+
+    Sora::TexUploadHandler::TexUpload<Sora::Texture2D> tex_handler;
+
+    tex_handler.add_texture(tex);
+    tex_handler.add_texture(tex2);
+
+    tex_handler.bind_textures();
+    tex_handler.upload_textures(shader, "utex");
+    tex_handler.unbind_textures();
+
+    // // bind texture once for now
+    // glActiveTexture(GL_TEXTURE0);
+    // tex->bind();
+    // shader->uploadInt("utex", 0);
+    // tex->unbind();
+
+    // glActiveTexture(GL_TEXTURE1);
+    // tex2->bind();
+    // shader->uploadInt("utex2", 1);
+    // tex2->unbind();
+
+    // --------- floor shaders ---- //
+    // floor vertices
+
+    Sora::Shader *f_shader = Sora::Filehandler::get_shader("assets/shaders/floor.glsl");
+    f_shader->bind();
+    Sora::Texture2D *f_tex = Sora::Filehandler::get_texture("assets/images/floor.png");
+
     // --- end texture
 
     // ----- glm testing ---- //
@@ -81,6 +105,11 @@ int main()
     shader->bind();
     shader->uploadMat4("view", camera.get_view());
     shader->uploadMat4("proj", camera.get_proj());
+
+    f_shader->bind();
+    f_shader->uploadMat4("view", camera.get_view());
+    f_shader->uploadMat4("proj", camera.get_proj());
+
     // --- end glm ---- //
 
     // vertices
@@ -120,11 +149,7 @@ int main()
     vert.unbind();
     index.unbind();
 
-    // floor vertices
-
-    Sora::Shader *f_shader = Sora::Filehandler::get_shader("assets/shaders/floor.glsl");
-    f_shader->bind();
-    Sora::Texture2D *f_tex = Sora::Filehandler::get_texture("assets/images/floor.png");
+    // ------------ floor vertices ------------ //
     // big issue with glactive texture
 
     glActiveTexture(GL_TEXTURE0);
@@ -136,10 +161,10 @@ int main()
 
     float floor_vertices[] = {//  top right, bototm right, bottomleft, top left
                               // position            // texcoords
-                              2.0f, -3.0f, 2.0f, 1.0f, 1.0f,
-                              2.0f, -0.0f, -2.0f, 1.0f, -1.0f,
-                              -2.0f, -0.0f, -2.0f, -1.0f, -1.0f,
-                              -2.0f, -3.0f, 2.0f, 0.0f, 1.0f};
+                              2.0f, -2.0f, 2.0f, 1.0f, 1.0f,
+                              2.0f, -2.0f, -2.0f, 1.0f, 0.0f,
+                              -2.0f, -2.0f, -2.0f, 0.0f, 0.0f,
+                              -2.0f, -2.0f, 2.0f, 0.0f, 1.0f};
     Sora::VAO f_vao;
     f_vao.create();
     f_vao.bind();
@@ -168,8 +193,6 @@ int main()
     glEnable(GL_DEPTH_TEST);
     framebuffer.unbind();
 
-    Sora::Texture2D *frame_image = framebuffer.get_frame();
-
     // ---- end setup --- //
 
     // game loop
@@ -183,7 +206,7 @@ int main()
     {
         // clear errors /  flush em out
         glCheckError();
-        glClearColor(0.6f, 0.0f, 0.2f, 1.0f);
+        Sora::set_clear_color(0.6f, 0.0f, 0.2f, 1.0f);
         glClear(Sora::CLEAR_BITS);
 
         // update call
@@ -208,19 +231,26 @@ int main()
             pos += camera.get_left() * -5.0f * Sora::Time::delta_time;
             // pos.x += 5.0f * Sora::Time::delta_time;
         }
+        if (Sora::Input::is_key_pressed(GLFW_KEY_LEFT_SHIFT))
+        {
+            pos += camera.get_up() * 5.0f * Sora::Time::delta_time;
+        }
+        if (Sora::Input::is_key_pressed(GLFW_KEY_SPACE))
+        {
+            pos += camera.get_up() * -5.0f * Sora::Time::delta_time;
+        }
+
         camera.set_position(pos);
         camera.update();
 
-        // render call
-        // framebuffer render
-        framebuffer.bind();
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(Sora::CLEAR_BITS);
+        // ------------- render call ------------- //
+
         // gigachad render
-        glActiveTexture(GL_TEXTURE0);
-        tex->bind();
-        glActiveTexture(GL_TEXTURE1);
-        tex2->bind();
+        tex_handler.bind_textures();
+        // glActiveTexture(GL_TEXTURE0);
+        // tex->bind();
+        // glActiveTexture(GL_TEXTURE1);
+        // tex2->bind();
         shader->bind();
         // upload variables
         shader->uploadMat4("view", camera.get_view());
@@ -232,38 +262,15 @@ int main()
         m_vao.disable_attribs();
         m_vao.unbind();
         shader->unbind();
-        tex->unbind();
-        tex2->unbind();
-
-        glCheckError();
-        // end gigachad
-        framebuffer.unbind();
-
-        glActiveTexture(GL_TEXTURE0);
-        tex->bind();
-        glActiveTexture(GL_TEXTURE1);
-        tex2->bind();
-        shader->bind();
-        // upload variables
-        shader->uploadMat4("view", camera.get_view());
-        shader->uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
-        // vertex array object
-        m_vao.bind();
-        m_vao.enable_attribs();
-        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        m_vao.disable_attribs();
-        m_vao.unbind();
-        shader->unbind();
-        tex->unbind();
-        tex2->unbind();
-
+        // tex->unbind();
+        // tex2->unbind();
+        tex_handler.unbind_textures();
         glCheckError();
 
         // render ground
         glActiveTexture(GL_TEXTURE0);
         // empty.bind();
-        // f_tex->bind();
-        frame_image->bind();
+        f_tex->bind();
         f_shader->bind();
         f_shader->uploadMat4("view", camera.get_view());
         f_vao.bind();
@@ -273,9 +280,7 @@ int main()
         f_vao.unbind();
         f_shader->unbind();
         // empty.unbind();
-        // f_tex->unbind();
-        frame_image->unbind();
-
+        f_tex->unbind();
         glCheckError();
 
         // update window

@@ -36,6 +36,7 @@ void Sora::FrameBuffer::create()
     glBindRenderbuffer(GL_RENDERBUFFER, this->render_buffer_object);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, this->frame.get_width(), this->frame.get_height());
     this->unbind();
+
     // link render buffer to frame buffer
     glNamedFramebufferRenderbuffer(this->frame_buffer_object, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->render_buffer_object);
     // glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->render_buffer_object);

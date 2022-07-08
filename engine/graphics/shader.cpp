@@ -178,6 +178,16 @@ void Sora::Shader::uploadMat4(const char *name, glm::mat4 mat)
     glUniformMatrix4fv(this->uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
+void Sora::Shader::uploadIntArray(const char *name, int count, int *values)
+{
+    glUniform1iv(this->uniform_location(name), count, values);
+}
+
+void Sora::Shader::uploadUIntArray(const char *name, int count, uint *values)
+{
+    glUniform1uiv(this->uniform_location(name), count, values);
+}
+
 // load shader from file
 
 Sora::Shader Sora::load_shader_from_file(const char *filepath)

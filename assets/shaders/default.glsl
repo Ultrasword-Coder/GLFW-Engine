@@ -13,7 +13,7 @@ out vec4 fCol;
 out vec2 fTex;
 
 void main(){
-    gl_Position = proj * view * vec4(vPos - vec3(0.0, 3* sin(utime) ,0.0), 1.0);
+    gl_Position = proj * view * vec4(vPos, 1.0);
     fCol = vCol;
     fTex = vTex;
 }
@@ -27,8 +27,7 @@ in vec4 fCol;
 in vec2 fTex;
 
 uniform float utime;
-uniform sampler2D utex;
-uniform sampler2D utex2;
+uniform sampler2D utex[2];
 
 vec4 alpha1, alpha2;
 float off;
@@ -39,6 +38,6 @@ void main(){
     // gl_FragColor = vec4(sin(utime), cos(utime), fTex.y, 1.0);
     off = sin(utime) + cos(fTex.y * PI * 10)/50;
     vec2 tpos = fTex;
-    alpha1 = texture(utex2, tpos); alpha2 = texture(utex, tpos);
+    alpha1 = texture(utex[0], tpos); alpha2 = texture(utex[1], tpos);
     gl_FragColor = mix(alpha1, alpha2, abs(sin(utime)));
 }
