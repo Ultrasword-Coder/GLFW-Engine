@@ -22,6 +22,7 @@ namespace Sora
         std::vector<Data> array;
 
     public:
+        BufferObject();
         BufferObject(int size, int type, int draw_type);
         BufferObject(int size, int type);
         ~BufferObject();

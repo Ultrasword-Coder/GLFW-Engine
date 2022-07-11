@@ -20,6 +20,7 @@
 
 #include "engine/handler/filehandler.cpp"
 #include "engine/handler/texuploadhandler.cpp"
+#include "engine/handler/vaohandler.cpp"
 
 #include "engine/components/transform.cpp"
 
@@ -166,32 +167,33 @@ int main()
                               -2.0f, -2.0f, -2.0f, 0.0f, 0.0f,
                               -2.0f, -2.0f, 2.0f, 0.0f, 1.0f};
     Sora::VAO f_vao;
-    f_vao.create();
-    f_vao.bind();
+    // f_vao.create();
+    // f_vao.bind();
     Sora::BufferObject<float> f_vert(20, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-    f_vert.create();
-    f_vert.bind();
-    f_vert.set_data(floor_vertices, 20);
-    f_vert.upload_data();
-    f_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
-    f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
+    // f_vert.create();
+    // f_vert.bind();
+    // f_vert.set_data(floor_vertices, 20);
+    // f_vert.upload_data();
+    // f_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
+    // f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
     Sora::BufferObject<uint> f_index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-    f_index.create();
-    f_index.bind();
-    f_index.set_data(indices, 6);
-    f_index.upload_data();
-    // unbind
-    f_vao.disable_attribs();
-    f_vao.unbind();
-    f_vert.unbind();
-    f_index.unbind();
+    // f_index.create();
+    // f_index.bind();
+    // f_index.set_data(indices, 6);
+    // f_index.upload_data();
+    // // unbind
+    // f_vao.disable_attribs();
+    // f_vao.unbind();
+    // f_vert.unbind();
+    // f_index.unbind();
 
-    // ---- framebuffer --- //
-    Sora::FrameBuffer framebuffer(1280, 720, 4);
-    framebuffer.create();
-    framebuffer.bind();
-    glEnable(GL_DEPTH_TEST);
-    framebuffer.unbind();
+    // ----------- vaohandler ------------ //
+
+    Sora::VAOHandler<float, uint> floor_vao = Sora::create_vao_handler<float, uint>(f_vao, f_vert, f_index);
+    floor_vao.create(floor_vertices, 20, indices, 6);
+    floor_vao.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
+    floor_vao.get_vao()->add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
+    floor_vao.unbind();
 
     // ---- end setup --- //
 
@@ -273,11 +275,13 @@ int main()
         f_tex->bind();
         f_shader->bind();
         f_shader->uploadMat4("view", camera.get_view());
-        f_vao.bind();
-        f_vao.enable_attribs();
+        floor_vao.bind();
+        // f_vao.bind();
+        // f_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        f_vao.disable_attribs();
-        f_vao.unbind();
+        // f_vao.disable_attribs();
+        // f_vao.unbind();
+        floor_vao.unbind();
         f_shader->unbind();
         // empty.unbind();
         f_tex->unbind();
@@ -296,7 +300,6 @@ int main()
     f_vao.clean();
     f_vert.clean();
     f_index.clean();
-    framebuffer.clean();
     Sora::Filehandler::clean(Sora::VERY_VERBOSE);
 
     window.clean();

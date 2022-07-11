@@ -2,6 +2,9 @@
 #include "buffer_object.hpp"
 
 template <typename Data>
+Sora::BufferObject<Data>::BufferObject() {}
+
+template <typename Data>
 Sora::BufferObject<Data>::BufferObject(int size, int gl_type, int draw_type) : size(size), type(gl_type), draw_type(draw_type)
 {
     this->array.resize(size, 0);
