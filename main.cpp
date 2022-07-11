@@ -126,29 +126,14 @@ int main()
         0, 1, 3,
         1, 2, 3};
     // create objects
-    Sora::VAO m_vao;
-    m_vao.create();
-    m_vao.bind();
-    Sora::BufferObject<float> vert(36, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-    vert.create();
-    vert.bind();
-    // data upload and set up
-    vert.set_data(vertices, 36);
-    vert.upload_data();
     int vertex_size_bytes = sizeof(float) * 9;
-    m_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, vertex_size_bytes, 0));
-    m_vao.add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 3));
-    m_vao.add_attribute(Sora::create_attribute(2, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 7));
-    Sora::BufferObject<uint> index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-    index.create();
-    index.bind();
-    index.set_data(indices, 6);
-    index.upload_data();
-    // unbind everything
-    m_vao.disable_attribs();
-    m_vao.unbind();
-    vert.unbind();
-    index.unbind();
+
+    Sora::VAOHandler main_vao = Sora::create_vao_handler(Sora::VAO(), Sora::BufferObject<float>(36, GL_ARRAY_BUFFER, GL_STATIC_DRAW), Sora::BufferObject<uint>(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
+    main_vao.create(vertices, 36, indices, 6);
+    main_vao.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, vertex_size_bytes, 0));
+    main_vao.get_vao()->add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 3));
+    main_vao.get_vao()->add_attribute(Sora::create_attribute(2, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 7));
+    main_vao.unbind();
 
     // ------------ floor vertices ------------ //
     // big issue with glactive texture
@@ -166,30 +151,7 @@ int main()
                               2.0f, -2.0f, -2.0f, 1.0f, 0.0f,
                               -2.0f, -2.0f, -2.0f, 0.0f, 0.0f,
                               -2.0f, -2.0f, 2.0f, 0.0f, 1.0f};
-    Sora::VAO f_vao;
-    // f_vao.create();
-    // f_vao.bind();
-    Sora::BufferObject<float> f_vert(20, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-    // f_vert.create();
-    // f_vert.bind();
-    // f_vert.set_data(floor_vertices, 20);
-    // f_vert.upload_data();
-    // f_vao.add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
-    // f_vao.add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
-    Sora::BufferObject<uint> f_index(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-    // f_index.create();
-    // f_index.bind();
-    // f_index.set_data(indices, 6);
-    // f_index.upload_data();
-    // // unbind
-    // f_vao.disable_attribs();
-    // f_vao.unbind();
-    // f_vert.unbind();
-    // f_index.unbind();
-
-    // ----------- vaohandler ------------ //
-
-    Sora::VAOHandler<float, uint> floor_vao = Sora::create_vao_handler<float, uint>(f_vao, f_vert, f_index);
+    Sora::VAOHandler<float, uint> floor_vao = Sora::create_vao_handler<float, uint>(Sora::VAO(), Sora::BufferObject<float>(20, GL_ARRAY_BUFFER, GL_STATIC_DRAW), Sora::BufferObject<uint>(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
     floor_vao.create(floor_vertices, 20, indices, 6);
     floor_vao.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
     floor_vao.get_vao()->add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
@@ -249,41 +211,25 @@ int main()
 
         // gigachad render
         tex_handler.bind_textures();
-        // glActiveTexture(GL_TEXTURE0);
-        // tex->bind();
-        // glActiveTexture(GL_TEXTURE1);
-        // tex2->bind();
         shader->bind();
-        // upload variables
         shader->uploadMat4("view", camera.get_view());
         shader->uploadValue(u_map.get_entry("utime"), Sora::Time::get_time());
-        // vertex array object
-        m_vao.bind();
-        m_vao.enable_attribs();
+        main_vao.bind();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        m_vao.disable_attribs();
-        m_vao.unbind();
+        main_vao.unbind();
         shader->unbind();
-        // tex->unbind();
-        // tex2->unbind();
         tex_handler.unbind_textures();
         glCheckError();
 
         // render ground
         glActiveTexture(GL_TEXTURE0);
-        // empty.bind();
         f_tex->bind();
         f_shader->bind();
         f_shader->uploadMat4("view", camera.get_view());
         floor_vao.bind();
-        // f_vao.bind();
-        // f_vao.enable_attribs();
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        // f_vao.disable_attribs();
-        // f_vao.unbind();
         floor_vao.unbind();
         f_shader->unbind();
-        // empty.unbind();
         f_tex->unbind();
         glCheckError();
 
@@ -292,14 +238,9 @@ int main()
         Sora::Input::update();
         Sora::Time::update();
     }
-    // std::cout << std::endl;
 
-    m_vao.clean();
-    vert.clean();
-    index.clean();
-    f_vao.clean();
-    f_vert.clean();
-    f_index.clean();
+    main_vao.clean();
+    floor_vao.clean();
     Sora::Filehandler::clean(Sora::VERY_VERBOSE);
 
     window.clean();
