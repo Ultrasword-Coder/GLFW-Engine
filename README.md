@@ -11,6 +11,24 @@ A Game Engine designed in C++ using the GLFW and GLEW libraries
   - `glfw` header files
   - `gl` glew header files
 
+## Features?
+
+As of commit: `d9a69fad5977e4cfb47c4e6db7ac41d7b44651fc`, gameobjects have been implemented but none of it is completed nor finished so it hasn't been applied in the code yet.
+
+The features:
+
+- texture loading
+- vertex array creation and handling (vertex buffers and index buffers)
+- keyboard and mouse input
+- window creation/deletion
+- framebuffers
+- shaders
+- started component system
+
+What can you do?:
+
+- you can use `WASD` to move camera and `SHIFT` + `SPACE` to move camera up and down
+
 ## File Structure
 
 - `engine`: the engine
