@@ -1,75 +1,75 @@
 #pragma once
 #include "transform.hpp"
 
-Sora::Transform::Transform(float x, float y, float z) : Sora::Component()
+SoraComponent::Transform::Transform(float x, float y, float z) : SoraComponent::Component()
 {
     this->pos.x = x;
     this->pos.y = y;
     this->pos.z = z;
 }
 
-Sora::Transform::Transform(glm::vec3 pos) : Sora::Transform(pos.x, pos.y, pos.z) {}
+SoraComponent::Transform::Transform(glm::vec3 pos) : SoraComponent::Transform(pos.x, pos.y, pos.z) {}
 
-Sora::Transform::Transform() : Sora::Transform(0.0f, 0.0f, 0.0f) {}
+SoraComponent::Transform::Transform() : SoraComponent::Transform(0.0f, 0.0f, 0.0f) {}
 
-Sora::Transform::~Transform() {}
+SoraComponent::Transform::~Transform() {}
 
-void Sora::Transform::on_ready() {}
+void SoraComponent::Transform::on_ready() {}
 
-void Sora::Transform::update() {}
+void SoraComponent::Transform::update() {}
 
-float Sora::Transform::get_x()
+float SoraComponent::Transform::get_x()
 {
     return this->pos.x;
 }
 
-float Sora::Transform::get_y()
+float SoraComponent::Transform::get_y()
 {
     return this->pos.y;
 }
 
-float Sora::Transform::get_z()
+float SoraComponent::Transform::get_z()
 {
     return this->pos.z;
 }
 
-glm::vec3 *Sora::Transform::get_pos()
+glm::vec3 *SoraComponent::Transform::get_pos()
 {
     return &this->pos;
 }
 
-inline Sora::Transform Sora::Transform::operator+(Sora::Transform other)
+inline SoraComponent::Transform SoraComponent::Transform::operator+(SoraComponent::Transform other)
 {
-    return Sora::Transform(glm::vec3(this->pos.x + other.pos.x, this->pos.y + other.pos.y, this->pos.z + other.pos.z));
+    return SoraComponent::Transform(glm::vec3(this->pos.x + other.pos.x, this->pos.y + other.pos.y, this->pos.z + other.pos.z));
 }
 
-inline Sora::Transform Sora::Transform::operator-(Sora::Transform other)
+inline SoraComponent::Transform SoraComponent::Transform::operator-(SoraComponent::Transform other)
 {
-    return Sora::Transform(glm::vec3(this->pos.x - other.pos.x, this->pos.y - other.pos.y, this->pos.z - other.pos.z));
+    return SoraComponent::Transform(glm::vec3(this->pos.x - other.pos.x, this->pos.y - other.pos.y, this->pos.z - other.pos.z));
 }
 
-inline void Sora::Transform::operator-=(Sora::Transform other)
+inline void SoraComponent::Transform::operator-=(SoraComponent::Transform other)
 {
     this->pos.x -= other.pos.x;
     this->pos.y -= other.pos.y;
     this->pos.z -= other.pos.z;
 }
 
-inline void Sora::Transform::operator+=(Sora::Transform other)
+inline void SoraComponent::Transform::operator+=(SoraComponent::Transform other)
 {
     this->pos.x += other.pos.x;
     this->pos.y += other.pos.y;
     this->pos.z += other.pos.z;
 }
 
-inline void Sora::Transform::operator=(Sora::Transform other)
+inline void SoraComponent::Transform::operator=(SoraComponent::Transform other)
 {
     this->pos.x = other.pos.x;
     this->pos.y = other.pos.y;
     this->pos.z = other.pos.z;
 }
 
-inline bool Sora::Transform::operator==(Sora::Transform other)
+inline bool SoraComponent::Transform::operator==(SoraComponent::Transform other)
 {
     return (pos.x == other.pos.x && pos.y == other.pos.y && pos.z == other.pos.z);
 }

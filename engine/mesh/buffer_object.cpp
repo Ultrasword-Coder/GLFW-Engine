@@ -13,7 +13,7 @@ Sora::BufferObject<Data>::BufferObject(int size, int gl_type, int draw_type) : s
 template <typename Data>
 Sora::BufferObject<Data>::BufferObject(int size, int gl_type) : size(size), type(gl_type)
 {
-    this(size, gl_type, Sora::DEFAULT_DRAW_TYPE);
+    Sora::BufferObject<Data>(size, gl_type, Sora::DEFAULT_DRAW_TYPE);
 }
 
 template <typename Data>

@@ -1,16 +1,22 @@
 #include <stdio.h>
-#include <iostream>
-#include <cstring>
-#include <string>
+#include <vector>
+
+#include "engine/components/component.cpp"
 
 int main()
 {
-    int *array[8];
-    memset(array, 0, sizeof(array));
-    for (int i = 0; i < 8; i++)
+
+    SoraComponent::ComponentHandler chandler;
+    SoraComponent::Component obj;
+    chandler.add_component(&obj);
+    SoraComponent::Component anota;
+    chandler.add_component(&anota);
+
+    for (int i = 0; i < 2; i++)
     {
-        std::cout << array[i] << std::endl;
+        printf("Comp: %s | %llu\n", chandler.get_at(i)->get_name().c_str(), chandler.get_at(i)->get_id());
     }
+    printf("End\n");
 
     return 0;
 }

@@ -3,10 +3,10 @@
 
 #include "component.cpp"
 
-namespace Sora
+namespace SoraComponent
 {
 
-    struct Transform : public Sora::Component
+    struct Transform : public SoraComponent::Component
     {
         glm::vec3 pos;
 
@@ -23,12 +23,12 @@ namespace Sora
         float get_z();
         glm::vec3 *get_pos();
 
-        inline bool operator==(Sora::Transform other);
-        inline void operator+=(Sora::Transform other);
-        inline void operator-=(Sora::Transform other);
-        inline Sora::Transform operator-(Sora::Transform other);
-        inline Sora::Transform operator+(Sora::Transform other);
-        inline void operator=(Sora::Transform other);
+        inline bool operator==(SoraComponent::Transform other);
+        inline void operator+=(SoraComponent::Transform other);
+        inline void operator-=(SoraComponent::Transform other);
+        inline SoraComponent::Transform operator-(SoraComponent::Transform other);
+        inline SoraComponent::Transform operator+(SoraComponent::Transform other);
+        inline void operator=(SoraComponent::Transform other);
     };
 
 }
