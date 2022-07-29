@@ -1,0 +1,77 @@
+
+-    // ----- setup ---- //
+-    // testing shaders
+-    Sora::Shader *shader = Sora::Filehandler::get_shader("assets/shaders/default.glsl");
+-    shader->bind();
+-
+-    // ---- create texture
+-    Sora::Texture2D *tex = Sora::Filehandler::get_texture("assets/images/img1.png");
+-    Sora::Texture2D *tex2 = Sora::Filehandler::get_texture("assets/images/img2.png");
+-
+-    /*
+-        NEXT TIME --
+-        MOVE TEXTURE UPLOADING INTO THE ALREADY MADE STRUCT
+-        the Sora::TexUploadHandler::TexUpload object!!!
+-    */
+-
+-    Sora::TexUploadHandler::TexUpload<Sora::Texture2D> tex_handler;
+-
+-    tex_handler.add_texture(tex);
+-    tex_handler.add_texture(tex2);
+-
+-    tex_handler.bind_textures();
+-    tex_handler.upload_textures(shader, "utex");
+-    tex_handler.unbind_textures();
+
+
+
+-    Sora::VAOHandler main_vao = Sora::create_vao_handler(Sora::VAO(), Sora::BufferObject<float>(36, GL_ARRAY_BUFFER, GL_STATIC_DRAW), Sora::BufferObject<uint>(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
+-    main_vao.create(vertices, 36, indices, 6);
+-    main_vao.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, vertex_size_bytes, 0));
+-    main_vao.get_vao()->add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 3));
+-    main_vao.get_vao()->add_attribute(Sora::create_attribute(2, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 7));
+-    main_vao.unbind();
+
+
+
+
+-
+-    // --------- floor shaders ---- //
+-    // floor vertices
+-
+-    Sora::Shader *f_shader = Sora::Filehandler::get_shader("assets/shaders/floor.glsl");
+-    f_shader->bind();
+-    Sora::Texture2D *f_tex = Sora::Filehandler::get_texture("assets/images/floor.png");
+-
+-    // --- end texture
+
+-    // create objects
+-    int vertex_size_bytes = sizeof(float) * 9;
+-
+-    Sora::VAOHandler main_vao = Sora::create_vao_handler(Sora::VAO(), Sora::BufferObject<float>(36, GL_ARRAY_BUFFER, GL_STATIC_DRAW), Sora::BufferObject<uint>(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
+-    main_vao.create(vertices, 36, indices, 6);
+-    main_vao.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, vertex_size_bytes, 0));
+-    main_vao.get_vao()->add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 3));
+-    main_vao.get_vao()->add_attribute(Sora::create_attribute(2, 2, GL_FLOAT, GL_FALSE, vertex_size_bytes, sizeof(float) * 7));
+-    main_vao.unbind();
+-    // ------------ floor vertices ------------ //
+-    // big issue with glactive texture
+-
+-    glActiveTexture(GL_TEXTURE0);
+-    f_tex->bind();
+-    f_shader->uploadInt("tex", 0);
+-    f_tex->unbind();
+-    f_shader->uploadMat4("proj", camera.get_proj());
+-    f_shader->unbind();
+-
+-    float floor_vertices[] = {//  top right, bototm right, bottomleft, top left
+-                              // position            // texcoords
+-                              2.0f, -2.0f, 2.0f, 1.0f, 1.0f,
+-                              2.0f, -2.0f, -2.0f, 1.0f, 0.0f,
+-                              -2.0f, -2.0f, -2.0f, 0.0f, 0.0f,
+-                              -2.0f, -2.0f, 2.0f, 0.0f, 1.0f};
+-    Sora::VAOHandler<float, uint> floor_vao = Sora::create_vao_handler<float, uint>(Sora::VAO(), Sora::BufferObject<float>(20, GL_ARRAY_BUFFER, GL_STATIC_DRAW), Sora::BufferObject<uint>(6, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));     
+-    floor_vao.create(floor_vertices, 20, indices, 6);
+-    floor_vao.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, 20, 0));
+-    floor_vao.get_vao()->add_attribute(Sora::create_attribute(1, 2, GL_FLOAT, GL_FALSE, 20, 12));
+-    floor_vao.unbind();

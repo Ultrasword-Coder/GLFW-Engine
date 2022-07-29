@@ -35,6 +35,11 @@ namespace Sora
 
         void bind();
         void unbind();
+
+        uint get_id();
+        int get_type();
+        int get_size();
+        int get_draw_type();
     };
 
 }

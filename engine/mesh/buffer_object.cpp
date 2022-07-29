@@ -8,12 +8,14 @@ template <typename Data>
 Sora::BufferObject<Data>::BufferObject(int size, int gl_type, int draw_type) : size(size), type(gl_type), draw_type(draw_type)
 {
     this->array.resize(size, 0);
+    this->create();
 }
 
 template <typename Data>
-Sora::BufferObject<Data>::BufferObject(int size, int gl_type) : size(size), type(gl_type)
+Sora::BufferObject<Data>::BufferObject(int size, int gl_type) : size(size), type(gl_type), draw_type(Sora::DEFAULT_DRAW_TYPE)
 {
-    Sora::BufferObject<Data>(size, gl_type, Sora::DEFAULT_DRAW_TYPE);
+    this->array.resize(size, 0);
+    this->create();
 }
 
 template <typename Data>
@@ -69,4 +71,27 @@ template <typename Data>
 void Sora::BufferObject<Data>::unbind()
 {
     glBindBuffer(this->type, 0);
+}
+
+template <typename Data>
+uint Sora::BufferObject<Data>::get_id()
+{
+    return this->id;
+}
+
+template <typename Data>
+int Sora::BufferObject<Data>::get_type()
+{
+    return this->type;
+}
+
+template <typename Data>
+int Sora::BufferObject<Data>::get_size()
+{
+    return this->size;
+}
+template <typename Data>
+int Sora::BufferObject<Data>::get_draw_type()
+{
+    return this->draw_type;
 }
