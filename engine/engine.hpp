@@ -31,12 +31,76 @@ namespace Sora
 
     const int VERBOSE = 1, VERY_VERBOSE = 2;
     GLint MAX_TEXTURES_AT_ONCE;
+    const int DEBUG = 1, NO_DEBUG = 0;
 
     // init glfw + glew
     static void error_callback(int error, const char *description)
     {
         std::cout << "[Sora][OPENGL ERROR][engine.hpp] " << description << std::endl;
     }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+
+    void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const *message, void const *user_param)
+    {
+        auto const src_str = [source]()
+        {
+            switch (source)
+            {
+            case GL_DEBUG_SOURCE_API:
+                return "API";
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+                return "WINDOW SYSTEM";
+            case GL_DEBUG_SOURCE_SHADER_COMPILER:
+                return "SHADER COMPILER";
+            case GL_DEBUG_SOURCE_THIRD_PARTY:
+                return "THIRD PARTY";
+            case GL_DEBUG_SOURCE_APPLICATION:
+                return "APPLICATION";
+            case GL_DEBUG_SOURCE_OTHER:
+                return "OTHER";
+            }
+        }();
+
+        auto const type_str = [type]()
+        {
+            switch (type)
+            {
+            case GL_DEBUG_TYPE_ERROR:
+                return "ERROR";
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+                return "DEPRECATED_BEHAVIOR";
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+                return "UNDEFINED_BEHAVIOR";
+            case GL_DEBUG_TYPE_PORTABILITY:
+                return "PORTABILITY";
+            case GL_DEBUG_TYPE_PERFORMANCE:
+                return "PERFORMANCE";
+            case GL_DEBUG_TYPE_MARKER:
+                return "MARKER";
+            case GL_DEBUG_TYPE_OTHER:
+                return "OTHER";
+            }
+        }();
+
+        auto const severity_str = [severity]()
+        {
+            switch (severity)
+            {
+            case GL_DEBUG_SEVERITY_NOTIFICATION:
+                return "NOTIFICATION";
+            case GL_DEBUG_SEVERITY_LOW:
+                return "LOW";
+            case GL_DEBUG_SEVERITY_MEDIUM:
+                return "MEDIUM";
+            case GL_DEBUG_SEVERITY_HIGH:
+                return "HIGH";
+            }
+        }();
+        std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
+    }
+#pragma GCC diagnostic pop
 
     void terminate_engine()
     {
@@ -63,12 +127,12 @@ namespace Sora
             assert(!"[Sora][GLFWINIT][engine.hpp] GLFW failed to initialize!");
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE); // set profile to core
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // set profile to core
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         if (verbose > 1)
         {
-            std::cout << "[Sora][GLFWINIT][engine.hpp] Setting GLFW Context Version to 3.3 core" << std::endl;
+            std::cout << "[Sora][GLFWINIT][engine.hpp] Setting GLFW Context Version to " << glfwGetVersionString() << std::endl;
         }
 
         // if apple...
@@ -76,16 +140,16 @@ namespace Sora
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         std::cout << "[Sora][APPLE][engine.hpp] Using APPLE machine! OPENGL FORWARD COMPAT has been set to true!" << std::endl;
 #endif
-
         // set error callback
         glfwSetErrorCallback(error_callback);
 
+        // debug setup
         // ------- openal init ----- //
 
         // ------------------------- //
     }
 
-    void init_glew(int verbose)
+    void init_glew(int verbose, bool debug)
     {
         /*
             Inititates GLEW library
@@ -98,6 +162,16 @@ namespace Sora
                 Sora::w_instance->clean();
             std::cout << "[Sora][GLEWINIT][engine.hpp] Failed to initialize `GLEW`" << std::endl;
             assert(!"[Sora][GLEWINIT][engine.hpp] GLEW Failed to initialize!");
+        }
+        if (verbose > 1)
+        {
+            std::cout << "[Sora][GLFWINIT][engine.hpp] OpenGL Version is set to " << glGetString(GL_VERSION) << std::endl;
+        }
+        if (debug)
+        {
+            glEnable(GL_DEBUG_OUTPUT);
+            glDebugMessageCallback(message_callback, nullptr);
+            std::cout << "[Sora][GLFWINIT][engine.hpp] OpenGL Debugging has been enabled." << std::endl;
         }
     }
 

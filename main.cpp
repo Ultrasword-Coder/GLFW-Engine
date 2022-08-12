@@ -39,7 +39,7 @@ void init()
     // --------------------------------------
     Sora::init_engine(Sora::VERY_VERBOSE);
     window.create();
-    Sora::init_glew(Sora::VERY_VERBOSE);
+    Sora::init_glew(Sora::VERY_VERBOSE, Sora::DEBUG);
     Sora::collect_engine_data(Sora::VERY_VERBOSE);
 
     // window event callbacks
@@ -88,14 +88,12 @@ int main()
 {
     init();
     // ----- glm testing ---- //
-    pos = glm::vec3(0.0f, 0.0f, -10.0f);
+    pos = glm::vec3(0.0f, 0.0f, 10.0f);
     camera.set_position(pos);
     camera.set_target(0.0f, 0.0f, 0.0f);
     camera.update_projection();
     camera.calculate_vectors();
     // --- end glm ---- //
-    std::cout << "start\n"
-              << __LINE__ << "\n";
 
     // vertices
     float vertices[] = {
@@ -116,23 +114,14 @@ int main()
     gigachad_shader->uploadMat4("view", camera.get_view());
     gigachad_shader->unbind();
 
-    std::cout << "shader\n"
-              << __LINE__ << "\n";
-
     Sora::VAOHandler<float, uint> gigachad = Sora::create_vao_handler(Sora::VAO(), Sora::BufferObject<float>(4 * 9, GL_ARRAY_BUFFER), Sora::BufferObject<uint>(6, GL_ELEMENT_ARRAY_BUFFER));
-    std::cout << GL_STATIC_DRAW << " " << gigachad.get_vertices()->get_draw_type() << '\n';
+    // std::cout << GL_STATIC_DRAW << " " << gigachad.get_vertices()->get_draw_type() << '\n';
     gigachad.create(vertices, 4 * 9, indices, 6);
-
-    std::cout << "created\n"
-              << __LINE__ << "\n";
 
     gigachad.get_vao()->add_attribute(Sora::create_attribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, 0));
     gigachad.get_vao()->add_attribute(Sora::create_attribute(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 9, sizeof(float) * 3));
     gigachad.get_vao()->add_attribute(Sora::create_attribute(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 9, sizeof(float) * 7));
     gigachad.unbind();
-
-    std::cout << "vao\n"
-              << __LINE__ << "\n";
 
     Sora::TexUploadHandler::TexUpload<Sora::Texture2D> gigachad_texs;
     gigachad_texs.add_texture(Sora::Filehandler::get_texture("assets/images/img1.png"));
@@ -140,11 +129,12 @@ int main()
     gigachad_texs.upload_textures(gigachad_shader, "utex");
     gigachad_texs.unbind_textures();
     // ---- end setup --- //
-    std::cout << "hi\n";
 
     // game loop
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+
+    camera.set_lookat(0.0f, 0.0f, -1.0f);
 
     Sora::set_clear_bits(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Sora::set_clear_color(0.6f, 0.0f, 0.2f, 1.0f);
@@ -174,18 +164,6 @@ int main()
         gigachad_shader->unbind();
         gigachad_texs.unbind_textures();
         glCheckError();
-
-        // gigachad render
-        // tex_handler.bind_textures();
-        // shader->bind();
-        // shader->uploadMat4("view", camera.get_view());
-        // shader->uploadFloat("utime", Sora::Time::get_time());
-        // main_vao.bind();
-        // glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        // main_vao.unbind();
-        // shader->unbind();
-        // tex_handler.unbind_textures();
-        // glCheckError();
 
         // // render ground
         // glActiveTexture(GL_TEXTURE0);

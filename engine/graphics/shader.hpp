@@ -16,11 +16,16 @@ typedef unsigned int uint;
 
 namespace Sora
 {
+    // constant values for shader
     const std::string VERT_SECTION = "#vertex", FRAG_SECTION = "#fragment";
     const uint FRAGTYPE = 0, VERTTYPE = 1;
 
     class Shader
     {
+        /*
+            Shader abstraction code :)
+            - very pog
+         */
     private:
         const char *filepath;
         std::string vert_shader, frag_shader;

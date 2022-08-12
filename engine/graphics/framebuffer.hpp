@@ -12,8 +12,14 @@ namespace Sora
 
     class FrameBuffer
     {
+        /*
+            Framebuffer object generates framebuffers that can be rendered to
+            - all opengl funcitonality is handled (most)
+        */
     private:
+        // opengl pointers to the framebufferobject and renderbufferobjects -- framebufferobject is what is used to bind and unbind framebuffer
         uint frame_buffer_object, render_buffer_object;
+        // texture
         Sora::Texture2D frame;
 
     public:

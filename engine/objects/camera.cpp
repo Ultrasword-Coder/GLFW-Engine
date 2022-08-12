@@ -27,6 +27,11 @@ glm::vec3 SoraEngine::Camera::get_target()
     return this->target;
 }
 
+glm::vec3 SoraEngine::Camera::get_lookat()
+{
+    return this->look_at;
+}
+
 glm::vec3 SoraEngine::Camera::get_up()
 {
     return this->camera_up;
@@ -69,6 +74,13 @@ void SoraEngine::Camera::set_target(float x, float y, float z)
     this->target = glm::vec3(x, y, z);
 }
 
+void SoraEngine::Camera::set_lookat(float x, float y, float z)
+{
+    this->look_at.x = x;
+    this->look_at.y = y;
+    this->look_at.z = z;
+}
+
 // ------- camera 2D -------
 
 SoraEngine::Camera2D::Camera2D(float width, float height) : SoraEngine::Camera(width, height, 0.1f, 100.0f) {}
@@ -90,12 +102,14 @@ void SoraEngine::Camera2D::update()
 
 void SoraEngine::Camera2D::calculate_vectors()
 {
-    // rdirection
-    this->rdirection = glm::normalize(this->position - this->target);
+    // rdirection --> direction that the camera faces
+    this->rdirection = glm::normalize(this->look_at);
     // camera right
     this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
     // camera up
     this->camera_up = glm::cross(this->rdirection, this->camera_left);
+    // calculate the target vector
+    this->target = this->position + this->look_at;
 }
 
 void SoraEngine::Camera2D::update_projection()
@@ -123,12 +137,14 @@ void SoraEngine::Camera3D::update()
 
 void SoraEngine::Camera3D::calculate_vectors()
 {
-    // rdirection
-    this->rdirection = glm::normalize(this->position - this->target);
+    // rdirection --> direction that the camera faces
+    this->rdirection = glm::normalize(this->look_at);
     // camera right
     this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
     // camera up
     this->camera_up = glm::cross(this->rdirection, this->camera_left);
+    // calculate the target vector
+    this->target = this->position + this->look_at;
 }
 
 void SoraEngine::Camera3D::update_projection()
