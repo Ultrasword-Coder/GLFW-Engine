@@ -11,7 +11,7 @@ namespace SoraEngine
     {
     protected:
         float width, height, near, far;
-        glm::vec3 position, target, rdirection, look_at;
+        glm::vec3 position, target, reverse_direction, look_at;
         glm::vec3 camera_left, camera_up;
         glm::mat4 view, proj;
 
@@ -25,7 +25,7 @@ namespace SoraEngine
         virtual void update_projection();
 
         glm::vec3 get_position();
-        glm::vec3 get_rdirection();
+        glm::vec3 get_reverse_direction();
         glm::vec3 get_target();
         glm::vec3 get_lookat();
         glm::vec3 get_up();
@@ -40,6 +40,7 @@ namespace SoraEngine
         void set_target(glm::vec3 pos);
         void set_target(float x, float y, float z);
         void set_lookat(float x, float y, float z);
+        void set_lookat(glm::vec3 look);
     };
 
     class Camera2D : public SoraEngine::Camera

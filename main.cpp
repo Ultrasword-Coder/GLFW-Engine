@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <STB/stb_image.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include "engine/engine.hpp"
 
@@ -28,8 +29,10 @@
 
 typedef unsigned int uint;
 
+const float _60deg = 3.1415 / 3.0f;
+
 Sora::Window window;
-glm::vec3 pos;
+glm::vec3 pos, look;
 SoraEngine::Camera3D camera(1280.0f, 720.0f);
 
 void init()
@@ -56,22 +59,22 @@ void update()
     if (Sora::Input::is_key_pressed(GLFW_KEY_W))
     {
         // move forward
-        pos += camera.get_rdirection() * 5.0f * Sora::Time::delta_time;
+        pos += camera.get_reverse_direction() * -5.0f * Sora::Time::delta_time;
         // pos.z -= 5.0f * Sora::Time::delta_time;
     }
     if (Sora::Input::is_key_pressed(GLFW_KEY_S))
     {
-        pos += camera.get_rdirection() * -5.0f * Sora::Time::delta_time;
+        pos += camera.get_reverse_direction() * 5.0f * Sora::Time::delta_time;
         // pos.z += 5.0f * Sora::Time::delta_time;
     }
     if (Sora::Input::is_key_pressed(GLFW_KEY_A))
     {
-        pos += camera.get_left() * 5.0f * Sora::Time::delta_time;
+        pos += camera.get_left() * -5.0f * Sora::Time::delta_time;
         // pos.x -= 5.0f * Sora::Time::delta_time;
     }
     if (Sora::Input::is_key_pressed(GLFW_KEY_D))
     {
-        pos += camera.get_left() * -5.0f * Sora::Time::delta_time;
+        pos += camera.get_left() * 5.0f * Sora::Time::delta_time;
         // pos.x += 5.0f * Sora::Time::delta_time;
     }
     if (Sora::Input::is_key_pressed(GLFW_KEY_LEFT_SHIFT))
@@ -82,15 +85,35 @@ void update()
     {
         pos += camera.get_up() * -5.0f * Sora::Time::delta_time;
     }
+
+    if (Sora::Input::is_key_pressed(GLFW_KEY_LEFT))
+    {
+        look = glm::rotateY(look, -_60deg * Sora::Time::delta_time);
+    }
+    if (Sora::Input::is_key_pressed(GLFW_KEY_RIGHT))
+    {
+        look = glm::rotateY(look, _60deg * Sora::Time::delta_time);
+    }
+    if (Sora::Input::is_key_pressed(GLFW_KEY_UP))
+    {
+        look = glm::rotateX(look, _60deg * Sora::Time::delta_time);
+    }
+    if (Sora::Input::is_key_pressed(GLFW_KEY_DOWN))
+    {
+        look = glm::rotateX(look, -_60deg * Sora::Time::delta_time);
+    }
+
+    // get mouse movement
 }
 
 int main()
 {
     init();
     // ----- glm testing ---- //
+    look = glm::vec3(0.0f, 0.0f, 1.0f);
     pos = glm::vec3(0.0f, 0.0f, 10.0f);
     camera.set_position(pos);
-    camera.set_target(0.0f, 0.0f, 0.0f);
+    camera.set_lookat(look);
     camera.update_projection();
     camera.calculate_vectors();
     // --- end glm ---- //
@@ -148,6 +171,7 @@ int main()
 
         // update call
         update();
+        camera.set_lookat(look);
         camera.set_position(pos);
         camera.update();
 

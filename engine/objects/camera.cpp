@@ -17,9 +17,9 @@ glm::vec3 SoraEngine::Camera::get_position()
     return this->position;
 }
 
-glm::vec3 SoraEngine::Camera::get_rdirection()
+glm::vec3 SoraEngine::Camera::get_reverse_direction()
 {
-    return this->rdirection;
+    return this->reverse_direction;
 }
 
 glm::vec3 SoraEngine::Camera::get_target()
@@ -81,6 +81,13 @@ void SoraEngine::Camera::set_lookat(float x, float y, float z)
     this->look_at.z = z;
 }
 
+void SoraEngine::Camera::set_lookat(glm::vec3 look)
+{
+    this->look_at.x = look.x;
+    this->look_at.y = look.y;
+    this->look_at.z = look.z;
+}
+
 // ------- camera 2D -------
 
 SoraEngine::Camera2D::Camera2D(float width, float height) : SoraEngine::Camera(width, height, 0.1f, 100.0f) {}
@@ -102,12 +109,12 @@ void SoraEngine::Camera2D::update()
 
 void SoraEngine::Camera2D::calculate_vectors()
 {
-    // rdirection --> direction that the camera faces
-    this->rdirection = glm::normalize(this->look_at);
+    // reverse_direction --> direction that the camera faces
+    this->reverse_direction = glm::normalize(this->look_at);
     // camera right
-    this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
+    this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->reverse_direction));
     // camera up
-    this->camera_up = glm::cross(this->rdirection, this->camera_left);
+    this->camera_up = glm::cross(this->reverse_direction, this->camera_left);
     // calculate the target vector
     this->target = this->position + this->look_at;
 }
@@ -137,12 +144,12 @@ void SoraEngine::Camera3D::update()
 
 void SoraEngine::Camera3D::calculate_vectors()
 {
-    // rdirection --> direction that the camera faces
-    this->rdirection = glm::normalize(this->look_at);
+    // reverse_direction --> direction that the camera faces
+    this->reverse_direction = glm::normalize(this->look_at);
     // camera right
-    this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->rdirection));
+    this->camera_left = glm::normalize(glm::cross(SoraEngine::UP, this->reverse_direction));
     // camera up
-    this->camera_up = glm::cross(this->rdirection, this->camera_left);
+    this->camera_up = glm::cross(this->reverse_direction, this->camera_left);
     // calculate the target vector
     this->target = this->position + this->look_at;
 }
