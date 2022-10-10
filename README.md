@@ -1,5 +1,8 @@
 # GLFW-Engine
 
+![Sample](docs/sample.png)
+Wow, what an amazing image :)
+
 Game Engine Testing in cpp with GLFW + GLEW and some other stuff OpenGL ig?
 
 A Game Engine designed in C++ using the GLFW and GLEW libraries
