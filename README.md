@@ -43,11 +43,7 @@ What can you do?:
 
 ## Compilation
 
-You don't :)
-
-Just kidding;
-
-### Both use G++/Gcc/GNU? idk man just that thing
+### Use G++/Gcc/GNU
 
 There are two files you can use for compilation:
 
@@ -58,7 +54,7 @@ There are two files you can use for compilation:
 
 ## Debug
 
-One file, not too sure how it works tho
+One file - using gdb
 
 1. `debug.bat`: the debug file for WINDOWS
    - uses gdb
@@ -66,4 +62,4 @@ One file, not too sure how it works tho
    - then enter `start + enter`
    - to continue, press `c` each time
 
-Only runs on windows becuase I have no idea how to use on MAC
+Only runs on windows as of right now
